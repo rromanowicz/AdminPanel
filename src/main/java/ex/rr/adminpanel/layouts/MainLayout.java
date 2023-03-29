@@ -6,6 +6,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -16,7 +17,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLink;
 import ex.rr.adminpanel.configuration.RoleEnum;
+import ex.rr.adminpanel.datasource.EnvContextHolder;
+import ex.rr.adminpanel.datasource.Env;
 import ex.rr.adminpanel.views.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -25,6 +29,8 @@ import java.util.Arrays;
 
 public class MainLayout extends AppLayout {
 
+    @Autowired
+    EnvContextHolder envContextHolder;
 
     protected void onAttach(AttachEvent attachEvent) {
         UI ui = getUI().get();
@@ -65,13 +71,18 @@ public class MainLayout extends AppLayout {
         header.setWidth("100%");
         header.addClassNames("py-0", "px-m");
 
-//        Button logout = new Button("Logout", e -> {
-//            SecurityContextHolder.clearContext();
-//            e.getSource().getUI().getSession().close();
-//            Page.setLocation(...);
-//        });
+        ComboBox<Env> env = new ComboBox<>();
+        env.setItems(Env.values());
+        env.setValue(envContextHolder.getEnvContext());
+        env.addValueChangeListener(event -> {
+            envContextHolder.setEnvContext(env.getValue());
+            this.getUI().get().getPage().reload();
+        });
+
+
 
         addToNavbar(header);
+        addToNavbar(env);
     }
 
     private void createDrawer() {

@@ -16,14 +16,14 @@ import java.util.Set;
 @Configuration
 class SecurityConfiguration extends VaadinWebSecurity {
 
-    @Value("${spring.h2.console.path}")
-    private String h2ConsolePath;
+//    @Value("${spring.h2.console.path}")
+//    private String h2ConsolePath;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
 //                .requestMatchers("/", "").anonymous()
-                .requestMatchers(h2ConsolePath).permitAll()
+//                .requestMatchers(h2ConsolePath).permitAll()
                 ;
         super.configure(http);
         setLoginView(http, LoginView.class);
