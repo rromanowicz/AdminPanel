@@ -1,40 +1,65 @@
+logging:
+  level:
+    root: WARN
+    ex:
+      rr: INFO
+
 server:
   port: 8080
+  shutdown: graceful
 
 spring:
   main:
     allow-bean-definition-overriding: true
-#  datasource:
-#    url: jdbc:h2:mem:testDb
-#    username: sa
-#    password: password
-#    driverClassName: org.h2.Driver
   jpa:
-#    generate-ddl: true
-    database: h2
     hibernate:
-      ddl-auto: update
-#  rabbitmq:
-#    host: localhost
-#    port: 5672
-#    user: guest
-#    password: guest
-#    listener:
-#      simple:
-#        default-requeue-rejected: false
+      ddl-auto: none
+  #  rabbitmq:
+  #    host: localhost
+  #    port: 5672
+  #    user: guest
+  #    password: guest
+  #    listener:
+  #      simple:
+  #        default-requeue-rejected: false
 
 
-  local:
-    datasource:
-      jdbcUrl: jdbc:h2:mem:localDb;INIT=CREATE TABLE IF NOT EXISTS DB_TRIGGER(ID INT PRIMARY KEY,QUERY TEXT,TYPE VARCHAR(255),TRIGGER VARCHAR(255),ENABLED INT)\;CREATE SEQUENCE "DB_TRIGGER_SEQ" MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 50 START WITH 99 NOCACHE NOCYCLE;
-      username: sa
-      password: password
-
-  dev:
-    datasource:
-      jdbcUrl: jdbc:h2:mem:devDb
-      username: sa
-      password: password
+  datasource:
+    local:
+      jdbcUrl: jdbc:h2:mem:localDb #;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+      platform: h2
+      initialization-mode: always
+      driverClassName: org.h2.Driver
+    dev:
+      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+      platform: h2
+      initialization-mode: always
+      driverClassName: org.h2.Driver
+    sit:
+      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+      platform: h2
+      initialization-mode: always
+      driverClassName: org.h2.Driver
+    sat:
+      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+      platform: h2
+      initialization-mode: always
+      driverClassName: org.h2.Driver
+    prod:
+      jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+      platform: h2
+      initialization-mode: always
+      driverClassName: org.h2.Driver
 
 vaadin:
   whitelisted-packages: com.vaadin,org.vaadin,com.example.vaadin

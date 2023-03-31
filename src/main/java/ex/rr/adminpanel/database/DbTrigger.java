@@ -1,5 +1,6 @@
 package ex.rr.adminpanel.database;
 
+import ex.rr.adminpanel.enums.ActionType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -12,8 +13,8 @@ public class DbTrigger {
     @GeneratedValue
     Long id;
     String query;
-    String type;
-    String trigger;
+    ActionType type;
+    String cron;
     Boolean enabled;
 
     public Long getId() {
@@ -32,20 +33,20 @@ public class DbTrigger {
         this.query = query;
     }
 
-    public String getType() {
+    public ActionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ActionType type) {
         this.type = type;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public String getCron() {
+        return cron;
     }
 
-    public void setTrigger(String trigger) {
-        this.trigger = trigger;
+    public void setCron(String cron) {
+        this.cron = cron;
     }
 
     public Boolean getEnabled() {

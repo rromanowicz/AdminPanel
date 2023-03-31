@@ -1,9 +1,11 @@
 package ex.rr.adminpanel.datasource;
 
+import ex.rr.adminpanel.enums.Env;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
-import javax.sql.DataSource;
-import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 public class DataSourceRouting extends AbstractRoutingDataSource {
 
@@ -13,13 +15,18 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
     }
 
     public void initDatasource(DataSource localDataSource,
-                               DataSource devDataSource) {
+                               DataSource devDataSource,
+                               DataSource sitDataSource,
+                               DataSource satDataSource,
+                               DataSource prodDataSource) {
         Map<Object, Object> dataSourceMap = new HashMap<>();
         dataSourceMap.put(Env.DEV, devDataSource);
+        dataSourceMap.put(Env.SIT, sitDataSource);
+        dataSourceMap.put(Env.SAT, satDataSource);
+        dataSourceMap.put(Env.PROD, prodDataSource);
         dataSourceMap.put(Env.LOCAL, localDataSource);
         this.setTargetDataSources(dataSourceMap);
-        // Here we have to provide default datasource details.
-        EnvContextHolder.setEnvContext(Env.DEV);
+        EnvContextHolder.setEnvContext(Env.LOCAL);
         this.setDefaultTargetDataSource(devDataSource);
     }
 }

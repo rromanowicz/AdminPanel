@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ex.rr.adminpanel.database.DbTrigger;
+import ex.rr.adminpanel.enums.ActionType;
 import ex.rr.adminpanel.layouts.MainLayout;
 import ex.rr.adminpanel.services.TriggerService;
 import jakarta.annotation.security.RolesAllowed;
@@ -44,9 +45,9 @@ public class DbTriggersView extends VerticalLayout {
 
         Grid<DbTrigger> grid = new Grid<>(DbTrigger.class, false);
 
-        grid.addColumn(DbTrigger::getQuery).setHeader("Query");
-        grid.addColumn(DbTrigger::getType).setHeader("Type").setFlexGrow(0);
-        grid.addColumn(DbTrigger::getTrigger).setHeader("Trigger").setFlexGrow(0);
+        grid.addColumn(DbTrigger::getQuery).setHeader("Query").setFlexGrow(6);
+        grid.addColumn(DbTrigger::getType).setHeader("Type").setFlexGrow(1);
+        grid.addColumn(DbTrigger::getCron).setHeader("Cron").setFlexGrow(1);
         grid.addColumn(DbTrigger::getEnabled).setHeader("Enabled").setFlexGrow(0);
         grid.addComponentColumn(dbTrigger -> {
             Button editButton = new Button("Edit");
@@ -71,18 +72,18 @@ public class DbTriggersView extends VerticalLayout {
 
         dialog.setHeaderTitle("Trigger");
 
-        TextField type = new TextField("Trigger", "", "");
-        TextField trigger = new TextField("Trigger", "", "");
+        ComboBox<ActionType> type = new ComboBox<>("Type", ActionType.values());
+        TextField cron = new TextField("Cron", "", "");
         ComboBox<Boolean> enabled = new ComboBox<>("Enabled", List.of(true, false));
         TextArea query = new TextArea();
         query.setLabel("Query");
-        FormLayout formLayout = new FormLayout(type, trigger, enabled, query);
+        FormLayout formLayout = new FormLayout(type, cron, enabled, query);
         formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 3));
         formLayout.setColspan(query, 3);
 
         if (dbTrigger != null) {
             type.setValue(tempDbTrigger.getType());
-            trigger.setValue(tempDbTrigger.getTrigger());
+            cron.setValue(tempDbTrigger.getCron());
             enabled.setValue(tempDbTrigger.getEnabled());
             query.setValue(tempDbTrigger.getQuery());
         }
@@ -103,7 +104,7 @@ public class DbTriggersView extends VerticalLayout {
         save.addClickListener(e -> {
             tempDbTrigger.setQuery(query.getValue());
             tempDbTrigger.setType(type.getValue());
-            tempDbTrigger.setTrigger(trigger.getValue());
+            tempDbTrigger.setCron(cron.getValue());
             tempDbTrigger.setEnabled(enabled.getValue());
             triggerService.save(tempDbTrigger);
             UI.getCurrent().getPage().reload();

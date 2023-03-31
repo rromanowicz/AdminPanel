@@ -1,5 +1,6 @@
 package ex.rr.adminpanel.datasource;
 
+import ex.rr.adminpanel.enums.Env;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +15,7 @@ public class EnvContextHolder {
         return env;
     }
 
-    public static void clearBranchContext() {
+    public static void clearEnvContext() {
         env = null;
     }
 }

@@ -18,6 +18,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ex.rr.adminpanel.database.DbTrigger;
+import ex.rr.adminpanel.enums.ActionType;
 import ex.rr.adminpanel.layouts.MainLayout;
 import ex.rr.adminpanel.services.TriggerService;
 import jakarta.annotation.security.RolesAllowed;
@@ -48,9 +49,9 @@ public class DbTriggersViewV2 extends VerticalLayout {
         Grid<DbTrigger> grid = new Grid<>(DbTrigger.class, false);
         Editor<DbTrigger> editor = grid.getEditor();
 
-        Grid.Column<DbTrigger> query = grid.addColumn(DbTrigger::getQuery).setHeader("Query");
-        Grid.Column<DbTrigger> type = grid.addColumn(DbTrigger::getType).setHeader("Type").setFlexGrow(0);
-        Grid.Column<DbTrigger> trigger = grid.addColumn(DbTrigger::getTrigger).setHeader("Trigger").setFlexGrow(0);
+        Grid.Column<DbTrigger> query = grid.addColumn(DbTrigger::getQuery).setHeader("Query").setFlexGrow(6);
+        Grid.Column<DbTrigger> type = grid.addColumn(DbTrigger::getType).setHeader("Type").setFlexGrow(1);
+        Grid.Column<DbTrigger> trigger = grid.addColumn(DbTrigger::getCron).setHeader("Trigger").setFlexGrow(1);
         Grid.Column<DbTrigger> enabled = grid.addColumn(DbTrigger::getEnabled).setHeader("Enabled").setFlexGrow(0);
         Grid.Column<DbTrigger> editColumn = grid.addComponentColumn(dbTrigger -> {
             Button editButton = new Button("Edit");
@@ -74,7 +75,8 @@ public class DbTriggersViewV2 extends VerticalLayout {
                 .bind(DbTrigger::getQuery, DbTrigger::setQuery);
         query.setEditorComponent(queryField);
 
-        TextField typeField = new TextField();
+        ComboBox<ActionType> typeField = new ComboBox<>();
+        typeField.setItems(ActionType.values());
         typeField.setWidthFull();
         binder.forField(typeField)
                 .asRequired("Field must not be empty")
@@ -82,13 +84,13 @@ public class DbTriggersViewV2 extends VerticalLayout {
                 .bind(DbTrigger::getType, DbTrigger::setType);
         type.setEditorComponent(typeField);
 
-        TextField triggerField = new TextField();
-        triggerField.setWidthFull();
-        binder.forField(triggerField)
+        TextField cronField = new TextField();
+        cronField.setWidthFull();
+        binder.forField(cronField)
                 .asRequired("Field must not be empty")
                 .withStatusLabel(validationMessage)
-                .bind(DbTrigger::getTrigger, DbTrigger::setTrigger);
-        trigger.setEditorComponent(triggerField);
+                .bind(DbTrigger::getCron, DbTrigger::setCron);
+        trigger.setEditorComponent(cronField);
 
         ComboBox<Boolean> enabledField = new ComboBox<>();
         enabledField.setItems(List.of(true, false));
@@ -129,18 +131,18 @@ public class DbTriggersViewV2 extends VerticalLayout {
 
         dialog.setHeaderTitle("Trigger");
 
-        TextField type = new TextField("Trigger", "", "");
-        TextField trigger = new TextField("Trigger", "", "");
+        ComboBox<ActionType> type = new ComboBox<>("Type", ActionType.values());
+        TextField cron = new TextField("Cron", "", "");
         ComboBox<Boolean> enabled = new ComboBox<>("Enabled", List.of(true, false));
         TextArea query = new TextArea();
         query.setLabel("Query");
-        FormLayout formLayout = new FormLayout(type, trigger, enabled, query);
+        FormLayout formLayout = new FormLayout(type, cron, enabled, query);
         formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 3));
         formLayout.setColspan(query, 3);
 
         if (dbTrigger != null) {
             type.setValue(tempDbTrigger.getType());
-            trigger.setValue(tempDbTrigger.getTrigger());
+            cron.setValue(tempDbTrigger.getCron());
             enabled.setValue(tempDbTrigger.getEnabled());
             query.setValue(tempDbTrigger.getQuery());
         }
@@ -161,7 +163,7 @@ public class DbTriggersViewV2 extends VerticalLayout {
         save.addClickListener(e -> {
             tempDbTrigger.setQuery(query.getValue());
             tempDbTrigger.setType(type.getValue());
-            tempDbTrigger.setTrigger(trigger.getValue());
+            tempDbTrigger.setCron(cron.getValue());
             tempDbTrigger.setEnabled(enabled.getValue());
             triggerService.save(tempDbTrigger);
             UI.getCurrent().getPage().reload();
