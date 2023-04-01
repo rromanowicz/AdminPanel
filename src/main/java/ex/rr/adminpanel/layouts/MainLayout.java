@@ -123,6 +123,7 @@ public class MainLayout extends AppLayout {
         if (hasAnyRole(RoleEnum.ROLE_REPORTS, RoleEnum.ROLE_ADMIN)) {
             tabs.add(spacerTab("Reports"));
             tabs.add(createTab(VaadinIcon.TABLE, "Report", ReportView.class));
+            tabs.add(createTab(VaadinIcon.TABLE, "Query Report", QueryReportView.class));
         }
 
         if (hasAnyRole(RoleEnum.ROLE_ADMIN)) {

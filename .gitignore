@@ -50,4 +50,5 @@ logs/
 *.log
 
 # Vaadin
-frontend/
+frontend/generated
+frontend/index.html
