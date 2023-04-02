@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DbTriggerRepository extends JpaRepository<DbTrigger, Long> {
+public interface TriggerRepository extends JpaRepository<Trigger, String> {
 }

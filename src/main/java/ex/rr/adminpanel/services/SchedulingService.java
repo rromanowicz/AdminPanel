@@ -23,6 +23,7 @@ public class SchedulingService {
     private Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
 
     public void scheduleTask(String jobId, Runnable tasklet, String cronExpression) {
+        removeTask(jobId);
         ScheduledFuture<?> scheduledTask = taskScheduler.schedule(tasklet, new CronTrigger(cronExpression, TimeZone.getTimeZone(TimeZone.getDefault().getID())));
         jobsMap.put(jobId, scheduledTask);
         log.info("User: [{}] scheduled task [[{}] [{}]]",
@@ -35,9 +36,9 @@ public class SchedulingService {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
             jobsMap.put(jobId, null);
+            log.info("User: [{}] disabled task [{}]",
+                    StringUtils.capitalize(SecurityContextHolder.getContext().getAuthentication().getName()),
+                    jobId);
         }
-        log.info("User: [{}] disabled task [{}]",
-                StringUtils.capitalize(SecurityContextHolder.getContext().getAuthentication().getName()),
-                jobId);
     }
 }

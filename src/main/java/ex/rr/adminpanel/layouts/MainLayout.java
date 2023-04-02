@@ -129,8 +129,8 @@ public class MainLayout extends AppLayout {
 
         if (hasAnyRole(RoleEnum.ROLE_ADMIN)) {
             tabs.add(spacerTab("Admin"));
-            tabs.add(createTab(VaadinIcon.DATABASE, "DB Triggers", DbTriggersView.class));
-            tabs.add(createTab(VaadinIcon.DATABASE, "DB Triggers V2", DbTriggersViewV2.class));
+            tabs.add(createTab(VaadinIcon.DATABASE, "Triggers", TriggersView.class));
+            tabs.add(createTab(VaadinIcon.DATABASE, "Triggers V2", TriggersViewV2.class));
         }
 
         addToDrawer(tabs);
