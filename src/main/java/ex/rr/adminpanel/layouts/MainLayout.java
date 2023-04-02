@@ -124,6 +124,7 @@ public class MainLayout extends AppLayout {
             tabs.add(spacerTab("Reports"));
             tabs.add(createTab(VaadinIcon.TABLE, "Report", ReportView.class));
             tabs.add(createTab(VaadinIcon.TABLE, "Query Report", QueryReportView.class));
+            tabs.add(createTab(VaadinIcon.TABLE, "Table Report", TableReportView.class));
         }
 
         if (hasAnyRole(RoleEnum.ROLE_ADMIN)) {

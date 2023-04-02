@@ -42,8 +42,13 @@ public class QueryService {
         return json.toString();
     }
 
-    public Grid<Tuple> toGrid() {
+    public Grid<Tuple> toGrid(Grid.SelectionMode selectionMode) {
         Grid<Tuple> grid = new Grid<>(Tuple.class, false);
+
+        if (selectionMode != null) {
+            grid.setSelectionMode(selectionMode);
+        }
+
         queryResults.get(0).getElements().forEach(col -> grid.addColumn(c -> c.get(col.getAlias())).setHeader(col.getAlias()));
         grid.setItems(queryResults);
         return grid;
