@@ -44,6 +44,10 @@ public class TableReportView extends VerticalLayout {
     private Grid<Tuple> columnGrid;
 
     TableReportView() {
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+
         reportCriteria = new Accordion();
         reportCriteria.setWidthFull();
 
@@ -67,8 +71,9 @@ public class TableReportView extends VerticalLayout {
         criteriaLayout.add(button);
         reportCriteria.add("Report criteria", criteriaLayout);
 
-        add(reportCriteria);
-        add(reportLayout);
+        layout.add(reportCriteria);
+        layout.add(reportLayout);
+        add(layout);
     }
 
     private void generateReport() {

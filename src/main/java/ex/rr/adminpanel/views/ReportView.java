@@ -20,7 +20,10 @@ import java.util.List;
 public class ReportView extends VerticalLayout {
 
     ReportView() {
-        /*Report criteria*/
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+
         Accordion reportCriteria = new Accordion();
 
         ComboBox<String> reportType = new ComboBox<>(" Report:");
@@ -49,8 +52,8 @@ public class ReportView extends VerticalLayout {
         criteriaLayout.add(button);
 
         reportCriteria.add("Report criteria", criteriaLayout);
-        add(reportCriteria);
-
+        layout.add(reportCriteria);
+        add(layout);
     }
 
     private void getTestGrid() {

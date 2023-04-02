@@ -28,6 +28,10 @@ public class QueryReportView extends VerticalLayout {
     QueryService queryService;
 
     QueryReportView() {
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+
         Accordion reportCriteria = new Accordion();
         reportCriteria.setWidthFull();
 
@@ -58,7 +62,8 @@ public class QueryReportView extends VerticalLayout {
         criteriaLayout.add(button);
         reportCriteria.add("Report criteria", criteriaLayout);
 
-        add(reportCriteria);
+        layout.add(reportCriteria);
+        add(layout);
     }
 
 }

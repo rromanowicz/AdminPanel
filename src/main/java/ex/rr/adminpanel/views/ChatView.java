@@ -20,13 +20,17 @@ import java.util.ArrayList;
 public class ChatView extends VerticalLayout {
 
     ChatView(ChatService service) {
+        setAlignItems(Alignment.CENTER);
+//        setJustifyContentMode(JustifyContentMode.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
 
         var messageList = new MessageList();
         var textInput = new MessageInput();
 
         setSizeFull();
-        add(messageList, textInput);
         expand(messageList);
+        expand(layout);
         textInput.setWidthFull();
 
         service.join().subscribe(message -> {
@@ -36,6 +40,8 @@ public class ChatView extends VerticalLayout {
         });
         textInput.addSubmitListener(event -> service.add(event.getValue()));
 
+        layout.add(messageList, textInput);
+        add(layout);
     }
 
 }

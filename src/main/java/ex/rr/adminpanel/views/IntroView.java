@@ -13,6 +13,10 @@ import ex.rr.adminpanel.layouts.MainLayout;
 @AnonymousAllowed
 public class IntroView extends VerticalLayout {
     IntroView() {
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+        layout.setAlignItems(Alignment.CENTER);
 
         String text = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus. Scelerisque fermentum dui faucibus in ornare. Ac feugiat sed lectus vestibulum mattis ullamcorper. Rutrum tellus pellentesque eu tincidunt tortor. Maecenas volutpat blandit aliquam etiam erat velit scelerisque in dictum. Eu consequat ac felis donec. Amet cursus sit amet dictum. Amet tellus cras adipiscing enim. Blandit massa enim nec dui nunc mattis enim. Vel pretium lectus quam id leo in vitae. Purus gravida quis blandit turpis cursus in. Euismod elementum nisi quis eleifend quam. Pulvinar etiam non quam lacus suspendisse. Integer vitae justo eget magna. Est ultricies integer quis auctor elit. Morbi tristique senectus et netus. Sapien nec sagittis aliquam malesuada bibendum arcu vitae.<br>
@@ -38,10 +42,6 @@ public class IntroView extends VerticalLayout {
         p.getElement().setProperty("innerHTML", text);
         p.getElement().getStyle().set("font-size", "20px");
 
-        setAlignItems(Alignment.CENTER);
-        VerticalLayout layout = new VerticalLayout();
-        layout.setWidth("80%");
-        layout.setAlignItems(Alignment.CENTER);
         layout.add(new H1("Hello"));
         layout.add(p);
 

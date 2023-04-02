@@ -40,7 +40,11 @@ public class TriggersViewV2 extends VerticalLayout {
     TriggersViewV2(TriggerService triggerService) {
         this.triggerService = triggerService;
 
-        add(new H2("Inline editing"));
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+
+        layout.add(new H2("Inline editing"));
         String html = """
                 I wasted time, so you don't have to.<br>
                 Lombok '@Data' annotation doesn't work with inline editing.<br>
@@ -49,7 +53,7 @@ public class TriggersViewV2 extends VerticalLayout {
                 """;
         Span span = new Span();
         span.getElement().setProperty("innerHTML", html);
-        add(span);
+        layout.add(span);
 
         Button addTrigger = new Button("Add Trigger");
         addTrigger.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -60,8 +64,9 @@ public class TriggersViewV2 extends VerticalLayout {
 
         configureGrid();
 
-        setAlignItems(Alignment.STRETCH);
-        add(header, grid, validationMessage);
+        layout.setAlignItems(Alignment.STRETCH);
+        layout.add(header, grid, validationMessage);
+        add(layout);
     }
 
     private void configureGrid() {

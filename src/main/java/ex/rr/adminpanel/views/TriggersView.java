@@ -26,9 +26,13 @@ public class TriggersView extends VerticalLayout {
     private Dialog dialog;
 
     TriggersView(TriggerService triggerService) {
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidth("80%");
+
         this.triggerService = triggerService;
 
-        add(new H2("Popup editing"));
+        layout.add(new H2("Popup editing"));
 
         Button addTrigger = new Button("Add Trigger");
         addTrigger.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -43,8 +47,9 @@ public class TriggersView extends VerticalLayout {
         getThemeList().clear();
         getThemeList().add("spacing-s");
 
-        setAlignItems(Alignment.STRETCH);
-        add(header, grid);
+        layout.setAlignItems(Alignment.STRETCH);
+        layout.add(header, grid);
+        add(layout);
     }
 
 
