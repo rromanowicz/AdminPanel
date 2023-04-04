@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TaskDefinition {
+    private String id;
     private String cronExpression;
     private InputType inputType;
     private ActionType actionType;
@@ -16,6 +17,7 @@ public class TaskDefinition {
 
     public static TaskDefinition fromTrigger(Trigger trigger) {
         return TaskDefinition.builder()
+                .id(trigger.getId())
                 .cronExpression(trigger.getCron())
                 .inputType(trigger.getInputType())
                 .actionType(trigger.getActionType())

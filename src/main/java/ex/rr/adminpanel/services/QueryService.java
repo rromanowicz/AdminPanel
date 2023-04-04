@@ -29,6 +29,9 @@ public class QueryService {
     }
 
     public String toJson() {
+        if(queryResults.isEmpty())
+            return null;
+
         List<ObjectNode> json = new ArrayList<ObjectNode>();
         ObjectMapper mapper = new ObjectMapper();
         for (Tuple t : queryResults) {

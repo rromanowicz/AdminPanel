@@ -5,6 +5,7 @@ import ex.rr.adminpanel.database.TriggerRepository;
 import ex.rr.adminpanel.scheduler.TaskDefinition;
 import ex.rr.adminpanel.scheduler.TaskRunner;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 public class TriggerService {
 
     private final SchedulingService schedulingService;
+    private final QueryService queryService;
 
     private final TriggerRepository triggerRepository;
 
@@ -24,7 +26,7 @@ public class TriggerService {
     public void save(Trigger trigger) {
         Trigger entity = triggerRepository.save(trigger);
         if (entity.getEnabled()) {
-            TaskRunner taskRunner = new TaskRunner();
+            TaskRunner taskRunner = new TaskRunner(queryService);
             taskRunner.setTaskDefinition(
                     TaskDefinition.fromTrigger(trigger)
             );
