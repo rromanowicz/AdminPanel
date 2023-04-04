@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Page {
+public class Template {
 
     @Id
     @GeneratedValue

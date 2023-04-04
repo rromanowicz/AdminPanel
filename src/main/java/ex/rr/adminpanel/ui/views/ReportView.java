@@ -2,14 +2,16 @@ package ex.rr.adminpanel.ui.views;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import ex.rr.adminpanel.models.templates.page.PageTemplate;
+import ex.rr.adminpanel.services.TemplateService;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +21,9 @@ import java.util.List;
 @RolesAllowed({"REPORTS", "ADMIN"})
 public class ReportView extends VerticalLayout {
 
+    @Autowired
+    private TemplateService templateService;
+
     ReportView() {
         setAlignItems(Alignment.CENTER);
         VerticalLayout layout = new VerticalLayout();
@@ -26,29 +31,19 @@ public class ReportView extends VerticalLayout {
 
         Accordion reportCriteria = new Accordion();
 
-        ComboBox<String> reportType = new ComboBox<>(" Report:");
-        reportType.setItems(List.of("Asd", "Zxc", "Qwe"));
-
-        ComboBox<String> reportParam1 = new ComboBox<>("Param");
-        reportType.addValueChangeListener(e -> reportParam1.setItems(reportParams(e.getValue())));
+        NumberField templateId = new NumberField("Template Id", "1");
 
 
         Button button = new Button("Select", event -> {
-            Notification.show(String.format("""
-                            Generation report [%s]
-                            With parameters: [%s]
-                            """
-                    , reportType.getValue()
-                    , reportParam1.getValue()), 1000, Notification.Position.MIDDLE);
             reportCriteria.close();
+            PageTemplate templateById = templateService.getTemplateById(1L);
 
             getTestGrid();
         });
 
 
         VerticalLayout criteriaLayout = new VerticalLayout();
-        criteriaLayout.add(reportType);
-        criteriaLayout.add(reportParam1);
+        criteriaLayout.add(templateId);
         criteriaLayout.add(button);
 
         reportCriteria.add("Report criteria", criteriaLayout);
