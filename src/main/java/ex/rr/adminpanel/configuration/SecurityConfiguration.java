@@ -1,8 +1,7 @@
 package ex.rr.adminpanel.configuration;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
-import ex.rr.adminpanel.views.LoginView;
-import org.springframework.beans.factory.annotation.Value;
+import ex.rr.adminpanel.ui.views.LoginView;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +10,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 import java.util.List;
-import java.util.Set;
 
 @Configuration
 class SecurityConfiguration extends VaadinWebSecurity {
