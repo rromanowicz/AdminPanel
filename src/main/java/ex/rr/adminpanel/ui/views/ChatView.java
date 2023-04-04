@@ -8,7 +8,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
-import ex.rr.adminpanel.datasource.services.ChatService;
+import ex.rr.adminpanel.services.ChatService;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.ArrayList;

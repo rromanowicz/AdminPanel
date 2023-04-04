@@ -8,7 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
-import ex.rr.adminpanel.datasource.services.QueryService;
+import ex.rr.adminpanel.services.QueryService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.persistence.Tuple;

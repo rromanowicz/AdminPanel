@@ -15,9 +15,9 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import ex.rr.adminpanel.datasource.database.Trigger;
-import ex.rr.adminpanel.datasource.enums.ActionType;
-import ex.rr.adminpanel.datasource.enums.InputType;
+import ex.rr.adminpanel.database.Trigger;
+import ex.rr.adminpanel.enums.ActionType;
+import ex.rr.adminpanel.enums.InputType;
 import lombok.Data;
 
 import java.util.List;
