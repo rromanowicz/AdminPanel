@@ -60,9 +60,7 @@ public class TableReportView extends VerticalLayout {
 
         reportLayout = new VerticalLayout();
 
-        Button button = new Button("Generate Report", event -> {
-            generateReport();
-        });
+        Button button = new Button("Generate Report", event -> generateReport());
 
         VerticalLayout criteriaLayout = new VerticalLayout();
         criteriaLayout.setWidthFull();
@@ -94,7 +92,7 @@ public class TableReportView extends VerticalLayout {
         displayNotification(NotificationVariant.LUMO_PRIMARY, query);
 
         try {
-            reportLayout.add(queryService.withQuery(query).toGrid(null));
+            reportLayout.add(queryService.withQuery(query).toGrid(Grid.SelectionMode.NONE));
             reportCriteria.close();
         } catch (IndexOutOfBoundsException e) {
             displayNotification(NotificationVariant.LUMO_ERROR, "Query returned 0 rows.");

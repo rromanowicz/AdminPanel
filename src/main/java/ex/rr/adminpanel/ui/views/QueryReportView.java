@@ -2,6 +2,7 @@ package ex.rr.adminpanel.ui.views;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -42,7 +43,7 @@ public class QueryReportView extends VerticalLayout {
 
         Button button = new Button("Execute", event -> {
             try {
-                add(queryService.withQuery(reportQuery.getValue()).toGrid(null));
+                add(queryService.withQuery(reportQuery.getValue()).toGrid(Grid.SelectionMode.NONE));
                 reportCriteria.close();
             } catch (PersistenceException e) {
                 log.error(e.getMessage());

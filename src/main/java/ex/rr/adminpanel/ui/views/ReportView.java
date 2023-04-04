@@ -1,6 +1,7 @@
 package ex.rr.adminpanel.ui.views;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -78,12 +79,11 @@ public class ReportView extends VerticalLayout {
         layout.add(new H1(template.getName()));
 
         template.getSections().forEach(section -> {
-            switch (section.getType()) {
+            Accordion sectionAccordion = switch (section.getType()) {
                 case REPORT -> getReport(section);
                 case DATA_GRID -> getDataGrid(section);
-            }
+            };
 
-            Accordion sectionAccordion = getDataGrid(section);
             layout.add(sectionAccordion);
         });
 
@@ -92,28 +92,26 @@ public class ReportView extends VerticalLayout {
 
     @NotNull
     private Accordion getDataGrid(PageSection section) {
-        Accordion sectionAccordion = new Accordion();
-        sectionAccordion.setWidthFull();
-        VerticalLayout sectionLayout = new VerticalLayout();
-        sectionLayout.setWidthFull();
-
-        sectionLayout.add(queryService.withQuery(section.getQuery()).toGrid(Grid.SelectionMode.NONE));
-
-        sectionAccordion.add(section.getName(), sectionLayout);
-        return sectionAccordion;
+        return getView(queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE), section.getName());
     }
 
     @NotNull
     private Accordion getReport(PageSection section) {
+        return getView(queryService.withQuery(section.getQuery()).toGrid(Grid.SelectionMode.NONE), section.getName());
+    }
+
+    @NotNull
+    private Accordion getView(Component component, String name) {
         Accordion sectionAccordion = new Accordion();
         sectionAccordion.setWidthFull();
         VerticalLayout sectionLayout = new VerticalLayout();
         sectionLayout.setWidthFull();
 
-        sectionLayout.add(queryService.withQuery(section.getQuery()).toGrid(Grid.SelectionMode.NONE));
+        sectionLayout.add(component);
 
-        sectionAccordion.add(section.getName(), sectionLayout);
+        sectionAccordion.add(name, sectionLayout);
         return sectionAccordion;
     }
+
 
 }
