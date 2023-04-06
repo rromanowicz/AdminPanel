@@ -28,7 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Route(value = "report", layout = MainLayout.class)
 @PageTitle("Report")
@@ -42,13 +45,21 @@ public class ReportView extends VerticalLayout {
     private QueryService queryService;
 
 
-    ComboBox<String> report;
+    private final ComboBox<String> report;
+    private final VerticalLayout mainLayout;
+    private String filterCriteria;
+    private Map<String, Filter> filterMap;
+    private VerticalLayout filterLayout;
+    private PageTemplate template;
 
     protected void onAttach(AttachEvent attachEvent) {
         report.setItems(templateService.getTemplateList());
+        filterMap = new HashMap<>();
     }
 
     ReportView() {
+        mainLayout = new VerticalLayout();
+        mainLayout.setWidthFull();
         setAlignItems(Alignment.CENTER);
         VerticalLayout layout = new VerticalLayout();
         layout.setWidth("80%");
@@ -68,9 +79,9 @@ public class ReportView extends VerticalLayout {
 
         Button button = new Button("Select", event -> {
             reportCriteria.close();
-            PageTemplate templateById = templateService.getTemplateByName(report.getValue());
+            template = templateService.getTemplateByName(report.getValue());
 
-            VerticalLayout generatedLayout = generateView(templateById);
+            VerticalLayout generatedLayout = generateView(template);
             generatedViewLayout.removeAll();
             generatedViewLayout.add(generatedLayout);
         });
@@ -87,9 +98,8 @@ public class ReportView extends VerticalLayout {
     }
 
     private VerticalLayout generateView(PageTemplate template) {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setWidthFull();
-        layout.add(new H1(template.getName()));
+        mainLayout.removeAll();
+        mainLayout.add(new H1(template.getName()));
 
         Accordion accordion = new Accordion();
         accordion.setWidthFull();
@@ -101,7 +111,7 @@ public class ReportView extends VerticalLayout {
         template.getSections().forEach(section -> {
             switch (section.getType()) {
                 case REPORT -> {
-                    AccordionPanel reportPanel = accordion.add(section.getName(),getReport(section));
+                    AccordionPanel reportPanel = accordion.add(section.getName(), getReport(section));
                     reportPanel.setOpened(true);
                 }
                 case DATA_GRID -> {
@@ -112,32 +122,72 @@ public class ReportView extends VerticalLayout {
         });
 
         accordion.open(1);
-        layout.add(accordion);
+        mainLayout.add(accordion);
 
-        return layout;
+        return mainLayout;
     }
 
 
     @NotNull
     private VerticalLayout getGlobalFilters(List<Filter> filters) {
-        VerticalLayout filterLayout = new VerticalLayout();
-        filters.forEach(filter -> {
-            HorizontalLayout hl = new HorizontalLayout();
-            hl.setAlignItems(Alignment.CENTER);
-            hl.add(getFilterComponent(filter));
-            filterLayout.add(hl);
-        });
+        if (filterLayout == null) {
+            filterLayout = new VerticalLayout();
+            filters.forEach(filter -> {
+                HorizontalLayout hl = new HorizontalLayout();
+                hl.setAlignItems(Alignment.CENTER);
+                hl.add(getFilterComponent(filter));
+                filterLayout.add(hl);
+            });
+
+            Button apply = new Button("Apply");
+            apply.addClickListener(event -> {
+                filterCriteria = buildFilterCriteria();
+                generateView(template);
+            });
+            filterLayout.add(apply);
+            filterCriteria = buildFilterCriteria();
+        }
 
         return filterLayout;
     }
 
     private Component getFilterComponent(Filter filter) {
-        return switch (filter.getColumnType()) {
-            case TEXT -> new TextField(filter.getColumn(), filter.getValue());
-            case NUMBER -> new NumberField(filter.getColumn(), filter.getValue());
-            case DATE -> new DatePicker(filter.getColumn(), LocalDate.now());
-            case DATETIME -> new DateTimePicker(filter.getColumn(), LocalDateTime.now());
-        };
+        switch (filter.getColumnType()) {
+            case TEXT -> {
+                TextField textField = new TextField(String.format("%s (%s)", filter.getColumn(), filter.getOperator()), filter.getValue());
+                filterMap.put(filter.getColumn(), filter);
+                textField.addValueChangeListener(event -> updateFilter(filter.getColumn(), textField.getValue()));
+                return textField;
+            }
+            case NUMBER -> {
+                NumberField numberField = new NumberField(String.format("%s (%s)", filter.getColumn(), filter.getOperator()), filter.getValue());
+                filterMap.put(filter.getColumn(), filter);
+                numberField.addValueChangeListener(event -> updateFilter(filter.getColumn(), String.valueOf(numberField.getValue())));
+                return numberField;
+            }
+            case DATE -> {
+                DatePicker datePicker = new DatePicker(String.format("%s (%s)", filter.getColumn(), filter.getOperator()), getDate(filter.getValue()));
+                filterMap.put(filter.getColumn(), filter);
+                datePicker.addValueChangeListener(event -> updateFilter(filter.getColumn(), datePicker.getValue().format(DateTimeFormatter.ISO_DATE)));
+                return datePicker; //TODO get value from Filter
+            }
+            case DATETIME -> {
+                DateTimePicker dateTimePicker = new DateTimePicker(String.format("%s (%s)", filter.getColumn(), filter.getOperator()), getDateTime(filter.getValue()));
+                filterMap.put(filter.getColumn(), filter);
+                dateTimePicker.addValueChangeListener(event -> updateFilter(filter.getColumn(), dateTimePicker.getValue().format(DateTimeFormatter.ISO_DATE)));
+                return dateTimePicker; //TODO get value from Filter
+            }
+            default -> {
+                return null;
+            }
+        }
+
+    }
+
+    private void updateFilter(String column, String value) {
+        Filter filter = filterMap.get(column);
+        filter.setValue(value);
+        filterMap.put(column, filter);
     }
 
     @NotNull
@@ -195,26 +245,92 @@ public class ReportView extends VerticalLayout {
         return vl;
     }
 
-    private static String getQuery(PageSection section, Grid<String> dimensions, Grid<String> facts) {
+    private String getQuery(PageSection section, Grid<String> dimensions, Grid<String> facts) {
         String query;
         String selectedDimensions = String.join(", ", dimensions.getSelectedItems());
         String selectedFacts = String.join(", ", facts.getSelectedItems().stream().map(it -> String.format("SUM(%s)", it)).toList());
         if (selectedDimensions.isEmpty()) {
-            query = String.format("SELECT %s FROM (%s) WHERE %s",
+            query = String.format("SELECT %s FROM (%s) WHERE %s %s",
                     selectedFacts,
                     section.getQuery().replace(";", ""),
-                    "1=1" //FIXME
+                    "1=1", filterCriteria
             );
         } else {
-            query = String.format("SELECT %s FROM (%s) WHERE %s GROUP BY %s ORDER BY %s",
+            query = String.format("SELECT %s FROM (%s) WHERE %s %s GROUP BY %s ORDER BY %s",
                     String.join(", ", selectedDimensions, selectedFacts),
                     section.getQuery().replace(";", ""),
-                    "1=1", //FIXME
+                    "1=1", filterCriteria,
                     selectedDimensions,
                     selectedDimensions
             );
         }
         return query;
+    }
+
+    private String buildFilterCriteria(List<Filter> filters) {
+        StringBuilder str = new StringBuilder();
+        filters.forEach(filter -> {
+            String operator = switch (filter.getOperator()) {
+                case EQUAL -> "=";
+                case GREATER_THAN -> ">";
+                case LESS_THAN -> "<";
+                case GREATER_THAN_OR_EQUAL -> ">=";
+                case LESS_THAN_OR_EQUAL -> "<=";
+            };
+            str.append("AND ").append(switch (filter.getColumnType()) {
+                case TEXT -> String.format("%s%s'%s'", filter.getColumn(), operator, filter.getValue());
+                case NUMBER -> String.format("%s%s%s", filter.getColumn(), operator, filter.getValue());
+                case DATE ->
+                        String.format("%s%s'%s'", filter.getColumn(), operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                case DATETIME ->
+                        String.format("%s%s'%s'", filter.getColumn(), operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+            });
+        });
+        return str.toString();
+    }
+
+    private String buildFilterCriteria() {
+        StringBuilder str = new StringBuilder();
+        filterMap.forEach((key, filter) -> {
+            String operator = switch (filter.getOperator()) {
+                case EQUAL -> "=";
+                case GREATER_THAN -> ">";
+                case LESS_THAN -> "<";
+                case GREATER_THAN_OR_EQUAL -> ">=";
+                case LESS_THAN_OR_EQUAL -> "<=";
+            };
+            str.append("AND ").append(switch (filter.getColumnType()) {
+                case TEXT -> String.format("%s%s'%s'", key, operator, filter.getValue());
+                case NUMBER -> String.format("%s%s%s", key, operator, filter.getValue());
+                case DATE ->
+                        String.format("%s%s'%s'", key, operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                case DATETIME ->
+                        String.format("%s%s'%s'", key, operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+            });
+        });
+        return str.toString();
+    }
+
+
+    private LocalDate getDate(String value) {
+        if ("TODAY".equals(value)) {
+            return LocalDate.now();
+        }
+        if (value.contains("TODAY")) {
+            return LocalDate.now().plusDays(Long.parseLong(value.replace("TODAY", "")));
+        } else {
+            return LocalDate.parse(value);
+        }
+    }
+
+    private LocalDateTime getDateTime(String value) {
+        if ("TODAY".equals(value)) {
+            return LocalDateTime.now();
+        } else if (value.contains("TODAY")) {
+            return LocalDateTime.now().plusDays(Long.parseLong(value.replace("TODAY", "")));
+        } else {
+            return LocalDateTime.parse(value);
+        }
     }
 
     @NotNull
