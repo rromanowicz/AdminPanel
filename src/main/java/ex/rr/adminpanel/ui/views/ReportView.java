@@ -3,6 +3,7 @@ package ex.rr.adminpanel.ui.views;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -61,6 +62,8 @@ public class ReportView extends VerticalLayout {
         generatedView.add("Report", generatedViewLayout);
 
         report = new ComboBox<>("Select report");
+        report.setPlaceholder("Select report");
+        report.getStyle().set("--vaadin-combo-box-overlay-width", "30%");
 
 
         Button button = new Button("Select", event -> {
@@ -88,22 +91,35 @@ public class ReportView extends VerticalLayout {
         layout.setWidthFull();
         layout.add(new H1(template.getName()));
 
-        layout.add(getGlobalFilters(template.getGlobalFilters()));
+        Accordion accordion = new Accordion();
+        accordion.setWidthFull();
+        accordion.close();
+
+        AccordionPanel filterPanel = accordion.add("Filters", getGlobalFilters(template.getGlobalFilters()));
+        filterPanel.setOpened(false);
 
         template.getSections().forEach(section -> {
             switch (section.getType()) {
-                case REPORT -> layout.add(getReport(section));
-                case DATA_GRID -> layout.add(getDataGrid(section));
+                case REPORT -> {
+                    AccordionPanel reportPanel = accordion.add(section.getName(),getReport(section));
+                    reportPanel.setOpened(true);
+                }
+                case DATA_GRID -> {
+                    AccordionPanel dataPanel = accordion.add(section.getName(), getDataGrid(section));
+                    dataPanel.setOpened(false);
+                }
             }
         });
+
+        accordion.open(1);
+        layout.add(accordion);
 
         return layout;
     }
 
 
     @NotNull
-    private Accordion getGlobalFilters(List<Filter> filters) {
-        Accordion globalFilters = new Accordion();
+    private VerticalLayout getGlobalFilters(List<Filter> filters) {
         VerticalLayout filterLayout = new VerticalLayout();
         filters.forEach(filter -> {
             HorizontalLayout hl = new HorizontalLayout();
@@ -112,8 +128,7 @@ public class ReportView extends VerticalLayout {
             filterLayout.add(hl);
         });
 
-        globalFilters.add("Filters", filterLayout);
-        return globalFilters;
+        return filterLayout;
     }
 
     private Component getFilterComponent(Filter filter) {
@@ -126,8 +141,8 @@ public class ReportView extends VerticalLayout {
     }
 
     @NotNull
-    private Accordion getDataGrid(PageSection section) {
-        return getView(section.getName(), queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE));
+    private VerticalLayout getDataGrid(PageSection section) {
+        return getView(queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE));
     }
 
     private Grid<String> getSelectionGrid(List<String> columns, List<String> selected) {
@@ -147,35 +162,36 @@ public class ReportView extends VerticalLayout {
     private VerticalLayout getReport(PageSection section) {
         VerticalLayout vl = new VerticalLayout();
 
-        VerticalLayout reportSection = new VerticalLayout();
+        Accordion reportAccordion = new Accordion();
+        reportAccordion.setWidthFull();
 
-        Accordion selection = new Accordion();
-        selection.setWidthFull();
-        HorizontalLayout hl = new HorizontalLayout();
-        hl.setWidthFull();
+        VerticalLayout criteriaLayout = new VerticalLayout();
+        VerticalLayout reportLayout = new VerticalLayout();
 
         Grid<String> dimensions = getSelectionGrid(section.getReport().getDimensions(), section.getReport().getInitialReport().getDimensions());
         Grid<String> facts = getSelectionGrid(section.getReport().getFacts(), section.getReport().getInitialReport().getFacts());
 
-        hl.add(dimensions, facts);
-        selection.add("Selection", hl);
-
-
-        vl.add(selection);
+        HorizontalLayout criteriaHL = new HorizontalLayout();
+        criteriaHL.setWidthFull();
+        criteriaHL.add(dimensions, facts);
 
         Button refresh = new Button("Refresh");
         refresh.addClickListener(event -> {
             String query = getQuery(section, dimensions, facts);
-            reportSection.removeAll();
-            reportSection.add(getView(section.getName(), queryService.withQuery(query).toGrid(Grid.SelectionMode.NONE)));
+            reportLayout.removeAll();
+            reportLayout.add(getView(queryService.withQuery(query).toGrid(Grid.SelectionMode.NONE)));
+            reportAccordion.open(1);
         });
 
-        vl.add(refresh);
+        criteriaLayout.add(criteriaHL, refresh);
 
-        Accordion reportGrid = getView(section.getName(), queryService.withQuery(getQuery(section, dimensions, facts)).toGrid(Grid.SelectionMode.NONE));
+        reportAccordion.add(new AccordionPanel("Criteria", criteriaLayout));
+        reportLayout.add(getView(queryService.withQuery(getQuery(section, dimensions, facts)).toGrid(Grid.SelectionMode.NONE)));
+        reportAccordion.add("Report", reportLayout);
 
-        reportSection.add(reportGrid);
-        vl.add(reportSection);
+        reportAccordion.open(1);
+        vl.add(reportAccordion);
+
         return vl;
     }
 
@@ -202,16 +218,11 @@ public class ReportView extends VerticalLayout {
     }
 
     @NotNull
-    private Accordion getView(String name, Component component) {
-        Accordion sectionAccordion = new Accordion();
-        sectionAccordion.setWidthFull();
+    private VerticalLayout getView(Component component) {
         VerticalLayout sectionLayout = new VerticalLayout();
         sectionLayout.setWidthFull();
-
         sectionLayout.add(component);
-
-        sectionAccordion.add(name, sectionLayout);
-        return sectionAccordion;
+        return sectionLayout;
     }
 
 
