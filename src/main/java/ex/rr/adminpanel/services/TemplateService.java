@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ex.rr.adminpanel.database.Template;
 import ex.rr.adminpanel.database.TemplateRepository;
+import ex.rr.adminpanel.models.templates.page.Column;
 import ex.rr.adminpanel.models.templates.page.PageTemplate;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +33,7 @@ public class TemplateService {
         all.forEach(template -> template.setPageTemplate(parseTemplate(template)));
         pageTemplateMap = all.stream().collect(Collectors.toMap(it -> it.getPageTemplate().getName(), Template::getPageTemplate));
 
-//        pageTemplateMap = templateRepository.findAll().stream().collect(Collectors.toMap(Template::getId, t -> {
-//            try {
-//                return objectMapper.readValue(t.getTemplate(), PageTemplate.class);
-//            } catch (JsonProcessingException e) {
-//                log.error("Failed to load template [{}], with error [{}]", t.getId(), e.getMessage());
-//                return null;
-//            }
-//        }));
+
     }
 
 
@@ -47,14 +41,21 @@ public class TemplateService {
         return this.pageTemplateMap.get(name);
     }
 
-    public Set<String> getTemplateList(){
+    public Set<String> getTemplateList() {
         return pageTemplateMap.keySet();
     }
 
 
     private PageTemplate parseTemplate(Template t) {
         try {
-            return objectMapper.readValue(t.getTemplate(), PageTemplate.class);
+            PageTemplate template = objectMapper.readValue(t.getTemplate(), PageTemplate.class);
+            if (template.getGlobalFilters() != null && template.getGlobalFilters().size() > 0) {
+                template.getGlobalFilters().forEach(filter -> filter.setColumnType(
+                        template.getSections().stream().flatMap(pageSection -> pageSection.getColumns().stream()).toList()
+                                .stream().filter(column -> filter.getColumn().equals(column.getName())).findFirst().map(Column::getType).get()
+                ));
+            }
+            return template;
         } catch (JsonProcessingException e) {
             log.error("Failed to load template [{}], with error [{}]", t.getId(), e.getMessage());
             return null;

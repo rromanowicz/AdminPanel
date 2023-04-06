@@ -11,5 +11,6 @@ public class PageTemplate {
     private String owner; //TODO change when user entity is created
     private PageVisibility visibility;
     private List<PageSection> sections;
+    private List<Filter> globalFilters;
 
 }

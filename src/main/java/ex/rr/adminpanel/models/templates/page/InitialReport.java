@@ -5,8 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Report {
+public class InitialReport {
     private List<String> dimensions;
     private List<String> facts;
-    private InitialReport initialReport;
 }

@@ -5,11 +5,17 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import ex.rr.adminpanel.models.templates.page.Filter;
 import ex.rr.adminpanel.models.templates.page.PageSection;
 import ex.rr.adminpanel.models.templates.page.PageTemplate;
 import ex.rr.adminpanel.services.QueryService;
@@ -18,6 +24,10 @@ import ex.rr.adminpanel.ui.layouts.MainLayout;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Route(value = "report", layout = MainLayout.class)
 @PageTitle("Report")
@@ -78,30 +88,121 @@ public class ReportView extends VerticalLayout {
         layout.setWidthFull();
         layout.add(new H1(template.getName()));
 
-        template.getSections().forEach(section -> {
-            Accordion sectionAccordion = switch (section.getType()) {
-                case REPORT -> getReport(section);
-                case DATA_GRID -> getDataGrid(section);
-            };
+        layout.add(getGlobalFilters(template.getGlobalFilters()));
 
-            layout.add(sectionAccordion);
+        template.getSections().forEach(section -> {
+            switch (section.getType()) {
+                case REPORT -> layout.add(getReport(section));
+                case DATA_GRID -> layout.add(getDataGrid(section));
+            }
         });
 
         return layout;
     }
 
+
+    @NotNull
+    private Accordion getGlobalFilters(List<Filter> filters) {
+        Accordion globalFilters = new Accordion();
+        VerticalLayout filterLayout = new VerticalLayout();
+        filters.forEach(filter -> {
+            HorizontalLayout hl = new HorizontalLayout();
+            hl.setAlignItems(Alignment.CENTER);
+            hl.add(getFilterComponent(filter));
+            filterLayout.add(hl);
+        });
+
+        globalFilters.add("Filters", filterLayout);
+        return globalFilters;
+    }
+
+    private Component getFilterComponent(Filter filter) {
+        return switch (filter.getColumnType()) {
+            case TEXT -> new TextField(filter.getColumn(), filter.getValue());
+            case NUMBER -> new NumberField(filter.getColumn(), filter.getValue());
+            case DATE -> new DatePicker(filter.getColumn(), LocalDate.now());
+            case DATETIME -> new DateTimePicker(filter.getColumn(), LocalDateTime.now());
+        };
+    }
+
     @NotNull
     private Accordion getDataGrid(PageSection section) {
-        return getView(queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE), section.getName());
+        return getView(section.getName(), queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE));
+    }
+
+    private Grid<String> getSelectionGrid(List<String> columns, List<String> selected) {
+        Grid<String> grid = new Grid<>(String.class, false);
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addColumn(s -> s).setHeader("Column Name");
+        grid.setItems(columns);
+
+        for (String s : selected) {
+            grid.getSelectionModel().select(s);
+        }
+
+        return grid;
     }
 
     @NotNull
-    private Accordion getReport(PageSection section) {
-        return getView(queryService.withQuery(section.getQuery()).toGrid(Grid.SelectionMode.NONE), section.getName());
+    private VerticalLayout getReport(PageSection section) {
+        VerticalLayout vl = new VerticalLayout();
+
+        VerticalLayout reportSection = new VerticalLayout();
+
+        Accordion selection = new Accordion();
+        selection.setWidthFull();
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setWidthFull();
+
+        Grid<String> dimensions = getSelectionGrid(section.getReport().getDimensions(), section.getReport().getInitialReport().getDimensions());
+        Grid<String> facts = getSelectionGrid(section.getReport().getFacts(), section.getReport().getInitialReport().getFacts());
+
+        hl.add(dimensions, facts);
+        selection.add("Selection", hl);
+
+
+        vl.add(selection);
+
+        Button refresh = new Button("Refresh");
+        refresh.addClickListener(event -> {
+            String query = getQuery(section, dimensions, facts);
+            reportSection.removeAll();
+            reportSection.add(getView(section.getName(), queryService.withQuery(query).toGrid(Grid.SelectionMode.NONE)));
+        });
+
+        vl.add(refresh);
+
+        Accordion reportGrid = getView(section.getName(), queryService.withQuery(getQuery(section, dimensions, facts)).toGrid(Grid.SelectionMode.NONE));
+
+        reportSection.add(reportGrid);
+        vl.add(reportSection);
+        return vl;
+    }
+
+    private static String getQuery(PageSection section, Grid<String> dimensions, Grid<String> facts) {
+        String query;
+        String selectedDimensions = String.join(", ", dimensions.getSelectedItems());
+        String selectedFacts = String.join(", ", facts.getSelectedItems().stream().map(it -> String.format("SUM(%s)", it)).toList());
+        if (selectedDimensions.isEmpty()) {
+            query = String.format("SELECT %s FROM (%s) WHERE %s",
+                    selectedFacts,
+                    section.getQuery().replace(";", ""),
+                    "1=1" //FIXME
+            );
+        } else {
+            query = String.format("SELECT %s FROM (%s) WHERE %s GROUP BY %s ORDER BY %s",
+                    String.join(", ", selectedDimensions, selectedFacts),
+                    section.getQuery().replace(";", ""),
+                    "1=1", //FIXME
+                    selectedDimensions,
+                    selectedDimensions
+            );
+        }
+        return query;
     }
 
     @NotNull
-    private Accordion getView(Component component, String name) {
+    private Accordion getView(String name, Component component) {
         Accordion sectionAccordion = new Accordion();
         sectionAccordion.setWidthFull();
         VerticalLayout sectionLayout = new VerticalLayout();

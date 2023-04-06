@@ -1,5 +1,6 @@
 package ex.rr.adminpanel.models.templates.page;
 
+import ex.rr.adminpanel.enums.ColumnType;
 import ex.rr.adminpanel.enums.FilterOperator;
 import lombok.Data;
 
@@ -8,5 +9,6 @@ public class Filter {
     private String column; //TODO Column?
     private FilterOperator operator;
     private String value;
+    private ColumnType columnType;
 }
 
