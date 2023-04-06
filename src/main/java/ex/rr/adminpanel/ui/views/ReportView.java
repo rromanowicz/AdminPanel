@@ -272,6 +272,7 @@ public class ReportView extends VerticalLayout {
         filters.forEach(filter -> {
             String operator = switch (filter.getOperator()) {
                 case EQUAL -> "=";
+                case NOT_EQUAL -> "<>";
                 case GREATER_THAN -> ">";
                 case LESS_THAN -> "<";
                 case GREATER_THAN_OR_EQUAL -> ">=";
@@ -281,9 +282,9 @@ public class ReportView extends VerticalLayout {
                 case TEXT -> String.format("%s%s'%s'", filter.getColumn(), operator, filter.getValue());
                 case NUMBER -> String.format("%s%s%s", filter.getColumn(), operator, filter.getValue());
                 case DATE ->
-                        String.format("%s%s'%s'", filter.getColumn(), operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", filter.getColumn(), operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
                 case DATETIME ->
-                        String.format("%s%s'%s'", filter.getColumn(), operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", filter.getColumn(), operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
             });
         });
         return str.toString();
@@ -294,6 +295,7 @@ public class ReportView extends VerticalLayout {
         filterMap.forEach((key, filter) -> {
             String operator = switch (filter.getOperator()) {
                 case EQUAL -> "=";
+                case NOT_EQUAL -> "<>";
                 case GREATER_THAN -> ">";
                 case LESS_THAN -> "<";
                 case GREATER_THAN_OR_EQUAL -> ">=";
@@ -303,9 +305,9 @@ public class ReportView extends VerticalLayout {
                 case TEXT -> String.format("%s%s'%s'", key, operator, filter.getValue());
                 case NUMBER -> String.format("%s%s%s", key, operator, filter.getValue());
                 case DATE ->
-                        String.format("%s%s'%s'", key, operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", key, operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
                 case DATETIME ->
-                        String.format("%s%s'%s'", key, operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", key, operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
             });
         });
         return str.toString();
