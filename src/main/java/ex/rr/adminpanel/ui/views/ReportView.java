@@ -16,6 +16,8 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+import ex.rr.adminpanel.ui.handler.SimpleErrorHandler;
 import ex.rr.adminpanel.models.templates.page.Filter;
 import ex.rr.adminpanel.models.templates.page.PageSection;
 import ex.rr.adminpanel.models.templates.page.PageTemplate;
@@ -55,6 +57,8 @@ public class ReportView extends VerticalLayout {
     protected void onAttach(AttachEvent attachEvent) {
         report.setItems(templateService.getTemplateList());
         filterMap = new HashMap<>();
+
+        VaadinSession.getCurrent().setErrorHandler(new SimpleErrorHandler());
     }
 
     ReportView() {
