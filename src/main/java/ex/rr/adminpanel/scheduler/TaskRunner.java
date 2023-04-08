@@ -7,6 +7,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * The {@code TaskRunner} class represents runner for {@code TaskDefinition}.
+ * {@code TaskDefinition.data} is executed based on {@code TaskDefinition.inputType}
+ * and triggers action defined in {@code TaskDefinition.actionType} if execution is successful.
+ *
+ * @author Robert Romanowicz
+ * @see TaskDefinition
+ */
 @Slf4j
 @Data
 @Component
