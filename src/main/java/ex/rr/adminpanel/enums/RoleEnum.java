@@ -1,4 +1,4 @@
-package ex.rr.adminpanel.configuration;
+package ex.rr.adminpanel.enums;
 
 public enum RoleEnum {
     ROLE_USER,

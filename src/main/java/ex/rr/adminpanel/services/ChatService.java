@@ -8,6 +8,9 @@ import reactor.core.publisher.Sinks;
 
 import java.time.Instant;
 
+/**
+ * Simple chat service just for fun. Not used by any other services/views.
+ */
 @Service
 public
 class ChatService {
