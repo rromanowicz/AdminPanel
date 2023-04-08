@@ -14,8 +14,8 @@ import java.util.List;
  * The {@code TriggerService} service class for Trigger related actions.
  * <p>Active triggers are loaded and scheduled during initialization.</p>
  *
- * @author Robert Romanowicz
- * @see Trigger
+ * @author  rromanowicz
+ * @see     Trigger
  */
 @RequiredArgsConstructor
 @Service

@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
  * The {@code TemplateService} service class for Template related actions.
  * <p>All templates are loaded and parsed during initialization for faster access.</p>
  *
- * @author Robert Romanowicz
- * @see Template
- * @see PageTemplate
+ * @author  rromanowicz
+ * @see     Template
+ * @see     PageTemplate
  */
 @Slf4j
 @RequiredArgsConstructor

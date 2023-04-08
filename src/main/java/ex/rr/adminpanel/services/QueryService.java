@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * The {@code QueryService} service class for SQL execution and processing.
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 @Slf4j
 @Service

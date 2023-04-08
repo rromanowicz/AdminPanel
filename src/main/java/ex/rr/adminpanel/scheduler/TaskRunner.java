@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
  * {@code TaskDefinition.data} is executed based on {@code TaskDefinition.inputType}
  * and triggers action defined in {@code TaskDefinition.actionType} if execution is successful.
  *
- * @author Robert Romanowicz
- * @see TaskDefinition
+ * @author  rromanowicz
+ * @see     TaskDefinition
  */
 @Slf4j
 @Data

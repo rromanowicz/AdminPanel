@@ -15,8 +15,8 @@ import lombok.Data;
  *     <li>{@code @Transient pageTemplate} - Parsed object required for further processing.</li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see PageTemplate
+ * @author  rromanowicz
+ * @see     PageTemplate
  */
 @Data
 @Entity

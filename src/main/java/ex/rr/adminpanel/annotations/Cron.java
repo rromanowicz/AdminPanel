@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 /**
  * The {@code @Cron} annotation marks the field to be verified if it contains a valid cron expression.
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

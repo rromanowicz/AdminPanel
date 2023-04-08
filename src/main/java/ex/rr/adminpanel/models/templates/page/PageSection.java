@@ -21,12 +21,12 @@ import java.util.List;
  *         <li>{@code params} - List of parameters to be applied only on this section.</li>
  *     </ul>
  *
- * @author Robert Romanowicz
- * @see SectionType
- * @see Column
- * @see Report
- * @see DataGrid
- * @see Param
+ * @author  rromanowicz
+ * @see     SectionType
+ * @see     Column
+ * @see     Report
+ * @see     DataGrid
+ * @see     Param
  */
 @Data
 public class PageSection {

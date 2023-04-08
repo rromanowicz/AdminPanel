@@ -12,8 +12,8 @@ import java.util.Map;
 /**
  * The {@code DataSourceRouting} class represents the DataSource Environment Router. Only the currently selected datasource will be used to execute db instructions.
  *
- * @author Robert Romanowicz
- * @see Env
+ * @author  rromanowicz
+ * @see     Env
  */
 public class DataSourceRouting extends AbstractRoutingDataSource {
 

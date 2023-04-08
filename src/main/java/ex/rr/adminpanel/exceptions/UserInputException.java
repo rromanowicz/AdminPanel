@@ -5,7 +5,7 @@ import ex.rr.adminpanel.scheduler.TaskDefinition;
 /**
  * The {@code UserInputException} class represents an exception that was directly caused ba user provided input.
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 public class UserInputException extends RuntimeException {
 

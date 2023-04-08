@@ -18,10 +18,10 @@ import lombok.Data;
  *     <li>{@code data} - Instructions used to fetch results.</li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see InputType
- * @see ActionType
- * @see Trigger
+ * @author  rromanowicz
+ * @see     InputType
+ * @see     ActionType
+ * @see     Trigger
  */
 @Data
 @Builder

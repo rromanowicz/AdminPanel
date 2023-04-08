@@ -11,8 +11,8 @@ import lombok.Data;
  *     <li>{@code value} - Required for GROUP type (specifies group name). </li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see VisibilityType
+ * @author  rromanowicz
+ * @see     VisibilityType
  */
 @Data
 public class PageVisibility {

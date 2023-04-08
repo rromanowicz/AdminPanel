@@ -14,11 +14,11 @@ import java.util.List;
  *     <li>{@code globalFilters} - List of filters that will be applied to all child elements of the report</li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see ex.rr.adminpanel.database.Template
- * @see PageVisibility
- * @see PageSection
- * @see Filter
+ * @author  rromanowicz
+ * @see     ex.rr.adminpanel.database.Template
+ * @see     PageVisibility
+ * @see     PageSection
+ * @see     Filter
  */
 @Data
 public class PageTemplate {

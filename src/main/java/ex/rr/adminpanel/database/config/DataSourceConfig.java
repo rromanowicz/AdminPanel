@@ -17,8 +17,8 @@ import javax.sql.DataSource;
  * <p>All defined sources will share the same Entity classes. Only one will be used at any given time.</p>
  * <p>Definitions are sourced from the property file.</p>
  *
- * @author Robert Romanowicz
- * @see DataSourceRouting
+ * @author  rromanowicz
+ * @see     DataSourceRouting
  */
 @Configuration
 @EnableJpaRepositories(basePackages = "ex.rr.adminpanel.database")

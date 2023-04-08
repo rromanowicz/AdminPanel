@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * The {@code EnvContextHolder} class represents container to store the Environment property value.
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 @Component
 public class EnvContextHolder {

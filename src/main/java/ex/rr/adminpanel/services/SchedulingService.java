@@ -18,8 +18,8 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * The {@code SchedulingService} service class for Trigger execution related actions.
  *
- * @author Robert Romanowicz
- * @see TaskScheduler
+ * @author  rromanowicz
+ * @see     TaskScheduler
  */
 @Slf4j
 @Service

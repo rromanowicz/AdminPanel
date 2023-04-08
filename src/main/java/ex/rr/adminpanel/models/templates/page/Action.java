@@ -20,9 +20,9 @@ import java.util.Map;
  *     <li>{@code data} - Values for substitution in url</li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see ActionType
- * @see ActionSubType
+ * @author  rromanowicz
+ * @see     ActionType
+ * @see     ActionSubType
  */
 @Data
 public class Action {

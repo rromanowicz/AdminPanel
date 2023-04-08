@@ -11,8 +11,8 @@ import lombok.Data;
  *         <pre>Values: TEXT, NUMBER, DATE, DATETIME</pre></li>
  * </ul>
  *
- * @author Robert Romanowicz
- * @see ColumnType
+ * @author  rromanowicz
+ * @see     ColumnType
  */
 @Data
 public class Column {

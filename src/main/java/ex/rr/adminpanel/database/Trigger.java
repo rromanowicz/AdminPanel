@@ -21,10 +21,10 @@ import jakarta.validation.constraints.NotNull;
  * </ul>
  * <p><i>Note: getters/setters intentionally created without Lombok.@Data to work with Vaadins Binder</i></p>
  *
- * @author Robert Romanowicz
- * @see InputType
- * @see ActionType
- * @see ex.rr.adminpanel.scheduler.TaskDefinition
+ * @author  rromanowicz
+ * @see     InputType
+ * @see     ActionType
+ * @see     ex.rr.adminpanel.scheduler.TaskDefinition
  */
 @Entity
 @Table(name = "TRIGGER")

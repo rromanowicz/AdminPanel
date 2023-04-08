@@ -11,8 +11,8 @@ import lombok.Data;
  *     <li>{@code column} - name of the column to be used</li>
  *     <li>{@code operator} - logical operator
  *         <pre>Values: EQUAL, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL</pre></li>
- *     <li>{@code value} - value to be used in filter (for DATE and DATETIME, a relative value TODAY{+/-x} can be used).
- *         <ul> For example:
+ *     <li>{@code value} - value to be used in filter (for DATE and DATETIME, a relative value TODAY{+/-x} can be used). For example:
+ *         <ul>
  *             <li>String value = "2023-04-06"</li>
  *             <li>String value = "TODAY"</li>
  *             <li>String value = "TODAY-7"</li>
@@ -21,7 +21,7 @@ import lombok.Data;
  *         <pre>Values: TEXT, NUMBER, DATE, DATETIME</pre></li>
  * </ul>
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  * @see     ColumnType
  * @see     FilterOperator
  */

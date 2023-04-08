@@ -9,7 +9,7 @@ import java.util.List;
  * {@code dimensions} - List of column names that will be used as reports dimensions<p>
  * {@code facts} - List of column names that will be used as reports fact values<p>
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 @Data
 public class InitialReport {

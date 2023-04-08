@@ -10,7 +10,7 @@ import java.util.List;
  *     <li>{@code actions} - List of actions to be bound to each element of the result set. Each element will create a button that executes specified action. </li>
  * </ul>
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  * @see     Action
  */
 @Data

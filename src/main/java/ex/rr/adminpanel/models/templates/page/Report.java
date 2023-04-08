@@ -12,7 +12,7 @@ import java.util.List;
  *     <li>{@code initialReport} - Initial view when report is loaded</li>
  * </ul>
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  * @see     InitialReport
  */
 @Data

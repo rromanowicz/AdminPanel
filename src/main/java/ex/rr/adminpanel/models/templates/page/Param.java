@@ -9,7 +9,7 @@ import lombok.Data;
  *     <li>{@code value} - TBD</li>
  * </ul>
  *
- * @author Robert Romanowicz
+ * @author  rromanowicz
  */
 @Data
 public class Param {
