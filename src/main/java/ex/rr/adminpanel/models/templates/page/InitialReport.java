@@ -4,6 +4,13 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * The {@code InitialReport} class represents the initial report configuration.<p>
+ * {@code dimensions} - List of column names that will be used as reports dimensions<p>
+ * {@code facts} - List of column names that will be used as reports fact values<p>
+ *
+ * @author Robert Romanowicz
+ */
 @Data
 public class InitialReport {
     private List<String> dimensions;

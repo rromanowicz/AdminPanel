@@ -8,20 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The {@code Action} class represents actions to be added in DATA_GRID.<p>
- * {@code name} - <p>
- * {@code action} - Action to be performed
- * <pre>
- *       Values: LOG, TEAMS_MESSAGE, REST
- *  </pre><p>
- * {@code type} - Type of REST call (required if action == REST)
- * <pre>
- *       Values: TEXT, POST, GET
- * </pre>
- * </pre><p>
- * {@code url} - Url for action with ${VALUE} markers for substitution<p>
- * {@code headers} - Headers to add to the REST call<p>
- * {@code data} - Values for substitution in url<p>
+ * The {@code Action} class represents actions to be added in DATA_GRID.
+ * <ul>
+ *     <li>{@code name} - Name to be displayed.</li>
+ *     <li>{@code action} - Action to be performed
+ *         <pre>Values: LOG, TEAMS_MESSAGE, REST</pre></li>
+ *     <li>{@code type} - Type of REST call (required if action == REST)
+ *         <pre>Values: TEXT, POST, GET</pre></li>
+ *     <li>{@code url} - Url for action with ${VALUE} markers for substitution</li>
+ *     <li>{@code headers} - Headers to add to the REST call</li>
+ *     <li>{@code data} - Values for substitution in url</li>
+ * </ul>
  *
  * @author Robert Romanowicz
  * @see ActionType
