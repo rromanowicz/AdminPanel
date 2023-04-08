@@ -1,12 +1,19 @@
 package ex.rr.adminpanel.database.config;
 
+import ex.rr.adminpanel.enums.ActionType;
 import ex.rr.adminpanel.enums.Env;
+import ex.rr.adminpanel.enums.InputType;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code DataSourceRouting} class represents the DataSource Router. Only the currently selected datasource will be used to execute db instructions.
+ *
+ * @author Robert Romanowicz
+ */
 public class DataSourceRouting extends AbstractRoutingDataSource {
 
     @Override

@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * The {@code TaskDefinition} class represents definition of the task to be executed
  * <ul>
- *     <li>{@code id} - Name to be displayed.</li>
+ *     <li>{@code id} - Id of the stored Trigger.</li>
  *     <li>{@code cronExpression} - Cron expression used for task execution</li>
  *     <li>{@code inputType} - How the data will be retrieved.
  *         <pre>Values: QUERY, CURL, TEXT</pre></li>
@@ -21,6 +21,7 @@ import lombok.Data;
  * @author Robert Romanowicz
  * @see InputType
  * @see ActionType
+ * @see Trigger
  */
 @Data
 @Builder

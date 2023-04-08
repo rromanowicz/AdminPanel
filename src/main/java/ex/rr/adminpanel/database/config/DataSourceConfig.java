@@ -12,6 +12,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 
+/**
+ * The {@code DataSourceConfig} configuration class initializes all the data sources used by the Router.
+ * <p>All defined sources will share the same Entity classes. Only one will be used at any given time.</p>
+ * <p>Definitions are sourced from the property file.</p>
+ *
+ * @author Robert Romanowicz
+ * @see DataSourceRouting
+ */
 @Configuration
 @EnableJpaRepositories(basePackages = "ex.rr.adminpanel.database")
 @EnableTransactionManagement
