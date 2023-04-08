@@ -10,9 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@code DataSourceRouting} class represents the DataSource Router. Only the currently selected datasource will be used to execute db instructions.
+ * The {@code DataSourceRouting} class represents the DataSource Environment Router. Only the currently selected datasource will be used to execute db instructions.
  *
  * @author Robert Romanowicz
+ * @see Env
  */
 public class DataSourceRouting extends AbstractRoutingDataSource {
 
