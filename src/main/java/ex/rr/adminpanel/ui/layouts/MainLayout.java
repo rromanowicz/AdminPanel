@@ -131,6 +131,9 @@ public class MainLayout extends AppLayout {
             tabs.add(spacerTab("Admin"));
             tabs.add(createTab(VaadinIcon.DATABASE, "Triggers", TriggersView.class));
             tabs.add(createTab(VaadinIcon.DATABASE, "Triggers V2", TriggersViewV2.class));
+            tabs.add(spacerTab("Settings"));
+            tabs.add(createTab(VaadinIcon.USER, "Users", UsersView.class));
+            tabs.add(createTab(VaadinIcon.TABLE, "Templates", TemplateView.class));
         }
 
         addToDrawer(tabs);

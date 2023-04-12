@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "T_USER")
@@ -32,13 +32,13 @@ public class User implements UserDetails {
     @CollectionTable(name = "T_ROLES", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "roles")
     @Fetch(FetchMode.JOIN)
-    private List<RoleEnum> roles;
+    private Set<RoleEnum> roles;
     private boolean active;
 
     public User() {
     }
 
-    public User(String username, String password, List<RoleEnum> roles, String salt) {
+    public User(String username, String password, Set<RoleEnum> roles, String salt) {
         this.username = username;
         this.roles = roles;
         this.password = DigestUtils.sha1Hex(password + salt);
