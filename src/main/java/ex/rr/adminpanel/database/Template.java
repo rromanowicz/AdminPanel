@@ -15,8 +15,8 @@ import lombok.Data;
  *     <li>{@code @Transient pageTemplate} - Parsed object required for further processing.</li>
  * </ul>
  *
- * @author  rromanowicz
- * @see     PageTemplate
+ * @author rromanowicz
+ * @see PageTemplate
  */
 @Data
 @Entity
@@ -24,9 +24,11 @@ public class Template {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     private String template;
+
+    private boolean active;
 
     @Transient
     private PageTemplate pageTemplate;

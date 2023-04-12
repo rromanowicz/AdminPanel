@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
  * The {@code TemplateService} service class for Template related actions.
  * <p>All templates are loaded and parsed during initialization for faster access.</p>
  *
- * @author  rromanowicz
- * @see     Template
- * @see     PageTemplate
+ * @author rromanowicz
+ * @see Template
+ * @see PageTemplate
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class TemplateService {
 
     @PostConstruct
     private void init() {
-        List<Template> all = templateRepository.findAll();
+        List<Template> all = templateRepository.findAllByActive(true);
         all.forEach(template -> template.setPageTemplate(parseTemplate(template)));
         pageTemplateMap = all.stream().collect(Collectors.toMap(it -> it.getPageTemplate().getName(), Template::getPageTemplate));
     }
@@ -49,8 +49,22 @@ public class TemplateService {
         return pageTemplateMap.keySet();
     }
 
+    public void disable(Integer id) {
+        Template template = templateRepository.findById(id).orElseThrow();
+        template.setActive(false);
+        saveTemplate(template);
+    }
+
+
     public void saveTemplate(Template template) {
-        templateRepository.save(template);
+        Template saved = templateRepository.save(template);
+        PageTemplate pageTemplate = parseTemplate(saved);
+        assert pageTemplate != null;
+        if (template.isActive()) {
+            pageTemplateMap.put(pageTemplate.getName(), pageTemplate);
+        } else {
+            pageTemplateMap.remove(pageTemplate.getName());
+        }
     }
 
     private PageTemplate parseTemplate(Template t) {
@@ -69,4 +83,7 @@ public class TemplateService {
         }
     }
 
+    public List<Template> findAll() {
+        return templateRepository.findAll();
+    }
 }
