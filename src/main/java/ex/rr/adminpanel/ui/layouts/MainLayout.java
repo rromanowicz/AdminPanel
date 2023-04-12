@@ -21,9 +21,9 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.Lumo;
-import ex.rr.adminpanel.enums.RoleEnum;
 import ex.rr.adminpanel.database.config.EnvContextHolder;
 import ex.rr.adminpanel.enums.Env;
+import ex.rr.adminpanel.enums.RoleEnum;
 import ex.rr.adminpanel.ui.views.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -138,8 +138,7 @@ public class MainLayout extends AppLayout {
 
     private static boolean hasAnyRole(RoleEnum... roles) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return Arrays.stream(roles).anyMatch(r ->
-                authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().contains(r.name())));
+        return Arrays.stream(roles).anyMatch(r -> authentication.getAuthorities().contains(r));
 
     }
 
