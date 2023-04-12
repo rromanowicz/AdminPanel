@@ -40,6 +40,9 @@ public class UserForm extends FormLayout {
 
     public UserForm() {
         userId.setReadOnly(true);
+        if(userId.getValue() == null){
+            username.setReadOnly(true);
+        }
         addClassName("trigger-form");
         binder.bindInstanceFields(this);
 

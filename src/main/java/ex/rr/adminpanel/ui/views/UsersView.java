@@ -46,9 +46,6 @@ public class UsersView extends VerticalLayout {
         configureGrid();
         updateGrid();
 
-//        getThemeList().clear();
-//        getThemeList().add("spacing-s");
-
         layout.setAlignItems(Alignment.STRETCH);
         layout.add(header, grid);
         add(layout);
@@ -80,7 +77,11 @@ public class UsersView extends VerticalLayout {
         UserForm form = new UserForm();
         form.setUser(tempUser);
         form.addListener(UserForm.SaveEvent.class, e -> {
-            userService.createUser(e.getUser());
+            if(user == null || user.getId() == null) {
+                userService.createUser(e.getUser());
+            } else {
+                userService.updateUser(e.getUser());
+            }
             updateGrid();
             dialog.close();
         });

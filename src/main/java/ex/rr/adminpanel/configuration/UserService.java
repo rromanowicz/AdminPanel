@@ -35,7 +35,7 @@ public class UserService implements UserDetailsManager, AuthenticationManager {
     }
 
 
-    public void createUser(User user){
+    public void createUser(User user) {
         userRepository.save(user);
     }
 
@@ -56,7 +56,15 @@ public class UserService implements UserDetailsManager, AuthenticationManager {
 
     @Override
     public void updateUser(UserDetails user) {
-        userRepository.save(new User(user.getUsername(), user.getPassword(), Set.of(RoleEnum.ROLE_USER), salt));
+        User dbUser = findByUsername(user.getUsername()).orElseThrow();
+        if (!user.getPassword().equals(dbUser.getPassword()) && !dbUser.checkPassword(user.getPassword(), salt)) {
+            dbUser.updatePassword(user.getPassword(), salt);
+        }
+        dbUser.setActive(((User) user).isActive());
+        dbUser.setRoles(((User) user).getRoles());
+        dbUser.setEmail(((User) user).getEmail());
+
+        userRepository.save(dbUser);
     }
 
     @Override

@@ -41,12 +41,16 @@ public class User implements UserDetails {
     public User(String username, String password, Set<RoleEnum> roles, String salt) {
         this.username = username;
         this.roles = roles;
-        this.password = DigestUtils.sha1Hex(password + salt);
-        this.active = true;
+        this.password = encode(password, salt);
+        this.active = false;
     }
 
     public boolean checkPassword(String password, String salt) {
-        return DigestUtils.sha1Hex(password + salt).equals(this.password);
+        return encode(password, salt).equals(this.password);
+    }
+
+    public void updatePassword(String password, String salt) {
+        this.password = encode(password, salt);
     }
 
     @Override
@@ -73,4 +77,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return this.active;
     }
+
+    private String encode(String password, String salt) {
+        return DigestUtils.sha1Hex(password + salt);
+    }
+
 }
