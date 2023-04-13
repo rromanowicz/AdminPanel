@@ -25,41 +25,48 @@ spring:
 
 
   datasource:
+    jdbcUrl: jdbc:h2:mem:localDb
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: org.h2.Driver
+
     local:
-      jdbcUrl: jdbc:h2:mem:localDb
+      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     dev:
-      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     sit:
-      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     sat:
-      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     prod:
       jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
 
 vaadin:
   whitelisted-packages: com.vaadin,org.vaadin,com.example.vaadin

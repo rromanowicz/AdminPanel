@@ -19,43 +19,65 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.Lumo;
 import ex.rr.adminpanel.database.config.EnvContextHolder;
 import ex.rr.adminpanel.enums.Env;
 import ex.rr.adminpanel.enums.RoleEnum;
+import ex.rr.adminpanel.ui.Session;
+import ex.rr.adminpanel.ui.utils.Utils;
 import ex.rr.adminpanel.ui.views.*;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 
+@Route("")
+@PageTitle("")
+@AnonymousAllowed
 public class MainLayout extends AppLayout {
 
     private HorizontalLayout header;
     private HorizontalLayout opts;
+    private HorizontalLayout envSelector;
+
+
+    private Session session;
 
 
     protected void onAttach(AttachEvent attachEvent) {
         UI ui = getUI().get();
         Button button;
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(principal)) {
+        this.session = Utils.getUserSession();
+        if (this.session == null) {
             button = new Button("Login", event -> ui.navigate(LoginView.class));
         } else {
             button = new Button("Logout", event -> {
+                this.session = null;
+                Utils.clearSession();
                 SecurityContextHolder.clearContext();
                 ui.getSession().close();
                 UI.getCurrent().getPage().setLocation("/logout");
             });
 
-            Label username = new Label(StringUtils.capitalize(SecurityContextHolder.getContext().getAuthentication().getName()));
-            opts.add(username);
+            createEnvSelector();
+
+            Label usernameLabel = new Label(this.session.getUsername());
+            opts.add(usernameLabel);
 
             ui.setPollInterval(3000);
+
+//            VaadinSession session = VaadinSession.getCurrent();
+//            this.session = new Session(username);
+//            session.setAttribute("session", this.session);
         }
 
         opts.add(button);
@@ -64,6 +86,7 @@ public class MainLayout extends AppLayout {
         themeToggle.addValueChangeListener(e -> setTheme(e.getValue()));
         themeToggle.setValue(true);
         opts.add(themeToggle);
+
     }
 
     private void setTheme(boolean dark) {
@@ -94,17 +117,10 @@ public class MainLayout extends AppLayout {
         header.setWidth("100%");
         header.addClassNames("py-0", "px-m");
 
-        ComboBox<Env> env = new ComboBox<>();
-        env.setItems(Env.values());
-        env.setValue(EnvContextHolder.getEnvContext());
-        env.addValueChangeListener(event -> EnvContextHolder.setEnvContext(env.getValue()));
+        envSelector = new HorizontalLayout();
 
-        Button reload = new Button(new Icon(VaadinIcon.REFRESH));
-        reload.addThemeVariants(ButtonVariant.LUMO_ICON);
-        reload.getElement().setAttribute("aria-label", "Reload");
-        reload.addClickListener(e -> UI.getCurrent().getPage().reload());
 
-        header.add(new Div(env, reload));
+        header.add(envSelector);
         header.add(opts);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
@@ -137,6 +153,56 @@ public class MainLayout extends AppLayout {
         }
 
         addToDrawer(tabs);
+    }
+
+    private void createEnvSelector() {
+        ComboBox<Env> env = new ComboBox<>();
+        env.setItems(Env.values());
+        env.setValue(EnvContextHolder.getEnvContext());
+        env.addValueChangeListener(event -> {
+            EnvContextHolder.setEnvContext(env.getValue());
+            try {
+                Connection connection = session.getDataSource().getConnection();
+                ResultSet resultSet = connection.prepareStatement("select * from trigger").executeQuery();
+                int columnCount = resultSet.getMetaData().getColumnCount();
+                if (resultSet.next()) {
+                    for (int i = 1; i < columnCount; i++) {
+                        System.out.printf("[%s] %s: %s%n",
+                                session.getSessionId(),
+                                resultSet.getMetaData().getColumnName(i),
+                                resultSet.getString(i));
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Button reload = new Button(new Icon(VaadinIcon.REFRESH));
+        reload.addThemeVariants(ButtonVariant.LUMO_ICON);
+        reload.getElement().setAttribute("aria-label", "Reload");
+//        reload.addClickListener(e -> UI.getCurrent().getPage().reload());
+        reload.addClickListener(event -> {
+            EnvContextHolder.setEnvContext(env.getValue());
+            try {
+                Connection connection = session.getDataSource().getConnection();
+                ResultSet resultSet = connection.prepareStatement("select * from trigger").executeQuery();
+                int columnCount = resultSet.getMetaData().getColumnCount();
+                if (resultSet.next()) {
+                    for (int i = 1; i < columnCount; i++) {
+                        System.out.printf("[%s | %s] %s: %s%n",
+                                session.getSessionId(),
+                                session.getUsername(),
+                                resultSet.getMetaData().getColumnName(i),
+                                resultSet.getString(i));
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        envSelector.add(new Div(env, reload));
     }
 
     private static boolean hasAnyRole(RoleEnum... roles) {

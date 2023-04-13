@@ -1,8 +1,6 @@
 package ex.rr.adminpanel.database.config;
 
-import ex.rr.adminpanel.enums.ActionType;
 import ex.rr.adminpanel.enums.Env;
-import ex.rr.adminpanel.enums.InputType;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -36,5 +34,6 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
         this.setTargetDataSources(dataSourceMap);
         EnvContextHolder.setEnvContext(Env.LOCAL);
         this.setDefaultTargetDataSource(devDataSource);
+        this.afterPropertiesSet();
     }
 }

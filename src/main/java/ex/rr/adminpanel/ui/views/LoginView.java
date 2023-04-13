@@ -6,14 +6,21 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import ex.rr.adminpanel.ui.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 @Route("login")
 public
 class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
+    @Autowired
+    Environment env;
+
+
     private final LoginForm login = new LoginForm();
 
-    public LoginView(){
+    public LoginView() {
         addClassName("login-view");
         setSizeFull();
 
@@ -21,6 +28,7 @@ class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         login.setAction("login");
+        login.addLoginListener(event -> Utils.createSession(event.getUsername(), env));
 
         add(new H1("Welcome"), login);
     }
@@ -28,7 +36,7 @@ class LoginView extends VerticalLayout implements BeforeEnterObserver {
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         // inform the user about an authentication error
-        if(beforeEnterEvent.getLocation()
+        if (beforeEnterEvent.getLocation()
                 .getQueryParameters()
                 .getParameters()
                 .containsKey("error")) {
