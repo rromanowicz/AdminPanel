@@ -14,15 +14,15 @@ import java.util.List;
  * The {@code TriggerService} service class for Trigger related actions.
  * <p>Active triggers are loaded and scheduled during initialization.</p>
  *
- * @author  rromanowicz
- * @see     Trigger
+ * @author rromanowicz
+ * @see Trigger
  */
 @RequiredArgsConstructor
 @Service
 public class TriggerService {
 
     private final SchedulingService schedulingService;
-    private final QueryService queryService;
+    private final QueryTupleService queryTupleService;
 
     private final TriggerRepository triggerRepository;
 
@@ -53,7 +53,7 @@ public class TriggerService {
     }
 
     private void scheduleTask(Trigger trigger) {
-        TaskRunner taskRunner = new TaskRunner(queryService);
+        TaskRunner taskRunner = new TaskRunner(queryTupleService);
         taskRunner.setTaskDefinition(
                 TaskDefinition.fromTrigger(trigger)
         );

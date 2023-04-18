@@ -1,6 +1,6 @@
 package ex.rr.adminpanel.scheduler;
 
-import ex.rr.adminpanel.services.QueryService;
+import ex.rr.adminpanel.services.QueryTupleService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
  * {@code TaskDefinition.data} is executed based on {@code TaskDefinition.inputType}
  * and triggers action defined in {@code TaskDefinition.actionType} if execution is successful.
  *
- * @author  rromanowicz
- * @see     TaskDefinition
+ * @author rromanowicz
+ * @see TaskDefinition
  */
 @Slf4j
 @Data
@@ -21,22 +21,22 @@ import org.springframework.stereotype.Component;
 public class TaskRunner implements Runnable {
 
     private ApplicationContext applicationContext;
-    private QueryService queryService;
+    private QueryTupleService queryTupleService;
 
     private TaskDefinition taskDefinition;
 
     public TaskRunner() {
     }
 
-    public TaskRunner(QueryService queryService) {
+    public TaskRunner(QueryTupleService queryTupleService) {
         this();
-        this.queryService = queryService;
+        this.queryTupleService = queryTupleService;
     }
 
     @Override
     public void run() {
         String output = switch (taskDefinition.getInputType()) {
-            case QUERY -> queryService.withQuery(taskDefinition.getData()).toJson();
+            case QUERY -> queryTupleService.withQuery(taskDefinition.getData()).toJson();
             case CURL -> null;
             case TEXT -> taskDefinition.getData();
         };

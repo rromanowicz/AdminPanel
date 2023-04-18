@@ -74,10 +74,6 @@ public class MainLayout extends AppLayout {
             opts.add(usernameLabel);
 
             ui.setPollInterval(3000);
-
-//            VaadinSession session = VaadinSession.getCurrent();
-//            this.session = new Session(username);
-//            session.setAttribute("session", this.session);
         }
 
         opts.add(button);
@@ -160,7 +156,7 @@ public class MainLayout extends AppLayout {
         env.setItems(Env.values());
         env.setValue(EnvContextHolder.getEnvContext());
         env.addValueChangeListener(event -> {
-            EnvContextHolder.setEnvContext(env.getValue());
+            session.setEnv(env.getValue());
             try {
                 Connection connection = session.getDataSource().getConnection();
                 ResultSet resultSet = connection.prepareStatement("select * from trigger").executeQuery();

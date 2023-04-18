@@ -1,23 +1,25 @@
 package ex.rr.adminpanel.database.config;
 
 import ex.rr.adminpanel.enums.Env;
+import ex.rr.adminpanel.ui.utils.Utils;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The {@code DataSourceRouting} class represents the DataSource Environment Router. Only the currently selected datasource will be used to execute db instructions.
  *
- * @author  rromanowicz
- * @see     Env
+ * @author rromanowicz
+ * @see Env
  */
 public class DataSourceRouting extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return EnvContextHolder.getEnvContext();
+        return Objects.requireNonNull(Utils.getUserSession()).getEnv();
     }
 
     public void initDatasource(DataSource localDataSource,

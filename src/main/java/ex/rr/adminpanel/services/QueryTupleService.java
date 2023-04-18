@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import ex.rr.adminpanel.exceptions.UserInputException;
 import ex.rr.adminpanel.models.templates.page.Action;
+import ex.rr.adminpanel.ui.Session;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TupleElement;
@@ -13,16 +14,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
  * The {@code QueryService} service class for SQL execution and processing.
  *
- * @author  rromanowicz
+ * @author rromanowicz
  */
 @Slf4j
 @Service
-public class QueryService {
+public class QueryTupleService {
 
     @Autowired
     EntityManager entityManager;
@@ -36,10 +40,33 @@ public class QueryService {
      * @param query query to be used for processing
      * @return QueryService
      */
-    public QueryService withQuery(String query) {
+    public QueryTupleService withQuery(String query) {
         validateQuery(query);
         this.queryResults = entityManager.createNativeQuery(query, Tuple.class).getResultList();
         this.actions = null;
+        return this;
+    }
+
+
+    public QueryTupleService query(Session session, String query) {
+        validateQuery(query);
+
+        try {
+            Connection connection = session.getDataSource().getConnection();
+            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
+            int columnCount = resultSet.getMetaData().getColumnCount();
+            if (resultSet.next()) {
+                for (int i = 1; i < columnCount; i++) {
+                    System.out.printf("[%s] %s: %s%n",
+                            session.getSessionId(),
+                            resultSet.getMetaData().getColumnName(i),
+                            resultSet.getString(i));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return this;
     }
 
@@ -49,7 +76,7 @@ public class QueryService {
      * @param actions List of {@link Action}
      * @return QueryService
      */
-    public QueryService withActions(List<Action> actions) {
+    public QueryTupleService withActions(List<Action> actions) {
         this.actions = actions;
         return this;
     }

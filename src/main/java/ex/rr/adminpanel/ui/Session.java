@@ -19,7 +19,7 @@ public class Session {
     public static final String SPRING_DATASOURCE_LOCAL = "spring.datasource.local.";
     public static final String SPRING_DATASOURCE_DEV = "spring.datasource.dev.";
     public static final String SPRING_DATASOURCE_SIT = "spring.datasource.sit.";
-    public static final String SPRING_DATASOURCE_SAT = "spring.datasource.sit.";
+    public static final String SPRING_DATASOURCE_SAT = "spring.datasource.sat.";
     public static final String SPRING_DATASOURCE_PROD = "spring.datasource.prod.";
 
     private final Environment environment;
@@ -47,6 +47,14 @@ public class Session {
 
     public String getUsername() {
         return username;
+    }
+
+    public Env getEnv() {
+        return env;
+    }
+
+    public void setEnv(Env env) {
+        this.env = env;
     }
 
     public DataSource getDataSource() {
