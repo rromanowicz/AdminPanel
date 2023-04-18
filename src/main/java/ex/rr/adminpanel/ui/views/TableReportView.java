@@ -27,7 +27,7 @@ import static ex.rr.adminpanel.ui.utils.Utils.displayNotification;
 @RolesAllowed({"REPORTS", "ADMIN"})
 public class TableReportView extends VerticalLayout {
 
-    private static final String TABLES_QUERY = "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE FROM INFORMATION_SCHEMA.TABLES";
+    private static final String TABLES_QUERY = "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA<>'INFORMATION_SCHEMA'";
     private static final String COLUMNS_QUERY = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='${SCHEMA}' AND TABLE_NAME='${TABLE}';";
 
     @Autowired
@@ -76,10 +76,13 @@ public class TableReportView extends VerticalLayout {
 
         Set<HashMap<String, Object>> rows = tableGrid.getSelectedItems();
         Map<String, Object> queryParams = new HashMap<>();
-        rows.forEach(t ->
-                queryParams.put("TABLE", String.format("%s.%s",
-                        t.get("TABLE_SCHEMA").toString(),
-                        t.get("TABLE_NAME").toString())));
+        rows.forEach(t -> {
+            String schemaCol = t.keySet().stream().filter(s -> s.contains("SCHEMA")).findFirst().orElseThrow();
+            String tableCol = t.keySet().stream().filter(s -> s.contains("TABLE") && !s.equals(schemaCol)).findFirst().orElseThrow();
+            queryParams.put("TABLE", String.format("%s.%s",
+                    t.get(schemaCol).toString(),
+                    t.get(tableCol).toString()));
+        });
         queryParams.put("COLUMNS", columnGrid.getSelectedItems().stream().map(t ->
                 t.get("COLUMN_NAME").toString()).toList());
 
@@ -116,8 +119,10 @@ public class TableReportView extends VerticalLayout {
             Set<HashMap<String, Object>> rows = tableGrid.getSelectedItems();
             rows.forEach(r ->
             {
-                String schemaName = r.get("TABLE_SCHEMA").toString();
-                String tableName = r.get("TABLE_NAME").toString();
+                String schemaCol = r.keySet().stream().filter(s -> s.contains("SCHEMA")).findFirst().orElseThrow();
+                String tableCol = r.keySet().stream().filter(s -> s.contains("TABLE") && !s.equals(schemaCol)).findFirst().orElseThrow();
+                String schemaName = r.get(schemaCol).toString();
+                String tableName = r.get(tableCol).toString();
                 fetchColumns(schemaName, tableName);
             });
         });

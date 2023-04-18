@@ -28,7 +28,6 @@ public class Session {
 
     private final String sessionId;
     private final String username;
-    private final DataSourceRouting routingDataSource;
 
     private final DataSource dataSource;
 
@@ -36,7 +35,7 @@ public class Session {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
         this.environment = environment;
-        routingDataSource = new DataSourceRouting();
+        this.env = Env.DEV; //Default env for new session
         dataSource = dataSource();
     }
 
@@ -65,8 +64,8 @@ public class Session {
     @Primary
     @Autowired
     public DataSource dataSource() {
-//        DataSourceRouting routingDataSource = new DataSourceRouting();
-        routingDataSource.initDatasource(localDataSource(), devDataSource(), sitDataSource(), satDataSource(), prodDataSource());
+        DataSourceRouting routingDataSource = new DataSourceRouting();
+        routingDataSource.initDatasource(env, localDataSource(), devDataSource(), sitDataSource(), satDataSource(), prodDataSource());
         return routingDataSource;
     }
 

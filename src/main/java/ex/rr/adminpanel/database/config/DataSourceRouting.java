@@ -22,7 +22,8 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
         return Objects.requireNonNull(Utils.getUserSession()).getEnv();
     }
 
-    public void initDatasource(DataSource localDataSource,
+    public void initDatasource(Env defaultEnv,
+                               DataSource localDataSource,
                                DataSource devDataSource,
                                DataSource sitDataSource,
                                DataSource satDataSource,
@@ -34,8 +35,8 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
         dataSourceMap.put(Env.PROD, prodDataSource);
         dataSourceMap.put(Env.LOCAL, localDataSource);
         this.setTargetDataSources(dataSourceMap);
-        EnvContextHolder.setEnvContext(Env.LOCAL);
-        this.setDefaultTargetDataSource(devDataSource);
+        this.setDefaultTargetDataSource(dataSourceMap.get(defaultEnv));
         this.afterPropertiesSet();
     }
+
 }

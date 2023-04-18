@@ -24,7 +24,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.Lumo;
-import ex.rr.adminpanel.database.config.EnvContextHolder;
 import ex.rr.adminpanel.enums.Env;
 import ex.rr.adminpanel.enums.RoleEnum;
 import ex.rr.adminpanel.ui.Session;
@@ -33,9 +32,6 @@ import ex.rr.adminpanel.ui.views.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 
@@ -48,9 +44,7 @@ public class MainLayout extends AppLayout {
     private HorizontalLayout opts;
     private HorizontalLayout envSelector;
 
-
     private Session session;
-
 
     protected void onAttach(AttachEvent attachEvent) {
         UI ui = getUI().get();
@@ -82,7 +76,6 @@ public class MainLayout extends AppLayout {
         themeToggle.addValueChangeListener(e -> setTheme(e.getValue()));
         themeToggle.setValue(true);
         opts.add(themeToggle);
-
     }
 
     private void setTheme(boolean dark) {
@@ -154,49 +147,13 @@ public class MainLayout extends AppLayout {
     private void createEnvSelector() {
         ComboBox<Env> env = new ComboBox<>();
         env.setItems(Env.values());
-        env.setValue(EnvContextHolder.getEnvContext());
-        env.addValueChangeListener(event -> {
-            session.setEnv(env.getValue());
-            try {
-                Connection connection = session.getDataSource().getConnection();
-                ResultSet resultSet = connection.prepareStatement("select * from trigger").executeQuery();
-                int columnCount = resultSet.getMetaData().getColumnCount();
-                if (resultSet.next()) {
-                    for (int i = 1; i < columnCount; i++) {
-                        System.out.printf("[%s] %s: %s%n",
-                                session.getSessionId(),
-                                resultSet.getMetaData().getColumnName(i),
-                                resultSet.getString(i));
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        env.setValue(session.getEnv());
+        env.addValueChangeListener(event -> session.setEnv(env.getValue()));
 
         Button reload = new Button(new Icon(VaadinIcon.REFRESH));
         reload.addThemeVariants(ButtonVariant.LUMO_ICON);
         reload.getElement().setAttribute("aria-label", "Reload");
-//        reload.addClickListener(e -> UI.getCurrent().getPage().reload());
-        reload.addClickListener(event -> {
-            EnvContextHolder.setEnvContext(env.getValue());
-            try {
-                Connection connection = session.getDataSource().getConnection();
-                ResultSet resultSet = connection.prepareStatement("select * from trigger").executeQuery();
-                int columnCount = resultSet.getMetaData().getColumnCount();
-                if (resultSet.next()) {
-                    for (int i = 1; i < columnCount; i++) {
-                        System.out.printf("[%s | %s] %s: %s%n",
-                                session.getSessionId(),
-                                session.getUsername(),
-                                resultSet.getMetaData().getColumnName(i),
-                                resultSet.getString(i));
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        reload.addClickListener(e -> UI.getCurrent().getPage().reload());
 
         envSelector.add(new Div(env, reload));
     }
