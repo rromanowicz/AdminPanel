@@ -2,6 +2,7 @@ package ex.rr.adminpanel.services;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
@@ -164,6 +165,7 @@ public class QueryResultSetService {
             case REST -> log.info("REST Call: [{} {}]", action.getType(), url);
             case TEAMS_MESSAGE -> log.info("TEAMS_MESSAGE Publishing: [{}]", url);
         }
+        Utils.displayNotification(NotificationVariant.LUMO_SUCCESS, "Success.", url);
     }
 
     /**

@@ -20,6 +20,7 @@ public class Utils {
     public static void displayNotification(NotificationVariant theme, String... messageLines) {
         Notification notification = new Notification();
         notification.addThemeVariants(theme);
+        notification.setDuration(5000);
 
         VerticalLayout vLayout = new VerticalLayout();
         for (String s : messageLines) {

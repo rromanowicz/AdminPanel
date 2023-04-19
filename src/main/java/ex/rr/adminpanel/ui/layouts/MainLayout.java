@@ -128,11 +128,11 @@ public class MainLayout extends AppLayout {
         if (hasAnyRole(RoleEnum.ROLE_REPORTS, RoleEnum.ROLE_ADMIN)) {
             tabs.add(spacerTab("Reports"));
             tabs.add(createTab(VaadinIcon.TABLE, "Report", ReportView.class));
-            tabs.add(createTab(VaadinIcon.TABLE, "Query Report", QueryReportView.class));
             tabs.add(createTab(VaadinIcon.TABLE, "Table Report", TableReportView.class));
         }
 
         if (hasAnyRole(RoleEnum.ROLE_ADMIN)) {
+            tabs.add(createTab(VaadinIcon.TABLE, "Query Report", QueryReportView.class));
             tabs.add(spacerTab("Admin"));
             tabs.add(createTab(VaadinIcon.DATABASE, "Triggers", TriggersView.class));
             tabs.add(createTab(VaadinIcon.DATABASE, "Triggers V2", TriggersViewV2.class));
