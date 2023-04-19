@@ -2,6 +2,7 @@ package ex.rr.adminpanel.services;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import ex.rr.adminpanel.exceptions.UserInputException;
@@ -25,7 +26,6 @@ import java.util.*;
 @VaadinSessionScope
 public class QueryResultSetService {
 
-
     /**
      * Adds query to be used for processing.
      *
@@ -40,6 +40,53 @@ public class QueryResultSetService {
             connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
             ResultSet queryResults = connection.prepareStatement(query).executeQuery();
             grid = toGrid(queryResults, actions, selectionMode);
+            queryResults.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return grid;
+    }
+
+    /**
+     * Adds query to be used for processing.
+     *
+     * @return Grid<HashMap < String, Object>>
+     */
+    public Grid<HashMap<String, Object>> getTables() {
+        Connection connection;
+        Grid<HashMap<String, Object>> grid;
+        try {
+            connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
+            String dbName = connection.getMetaData().getDatabaseProductName();
+            String query = (String) VaadinSession.getCurrent().getAttribute(dbName + ".tblQuery");
+            ResultSet queryResults = connection.prepareStatement(query).executeQuery();
+            grid = toGrid(queryResults, null, Grid.SelectionMode.SINGLE);
+            queryResults.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return grid;
+    }
+
+    /**
+     * Adds query to be used for processing.
+     *
+     * @return Grid<HashMap < String, Object>>
+     */
+    public Grid<HashMap<String, Object>> getTableColumns(String schema, String table) {
+        Connection connection;
+        Grid<HashMap<String, Object>> grid;
+        try {
+            connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
+            String dbName = connection.getMetaData().getDatabaseProductName().toUpperCase();
+            String query = (String) VaadinSession.getCurrent().getAttribute(dbName + ".colQuery");
+            ResultSet queryResults = connection.prepareStatement(query
+                    .replace("{SCHEMA}", schema).replace("{TABLE}", table)).executeQuery();
+            grid = toGrid(queryResults, null, Grid.SelectionMode.MULTI);
             queryResults.close();
             connection.close();
         } catch (SQLException e) {

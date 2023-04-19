@@ -1,5 +1,6 @@
 package ex.rr.adminpanel.ui;
 
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import ex.rr.adminpanel.database.config.DataSourceRouting;
@@ -31,12 +32,21 @@ public class Session {
 
     private final DataSource dataSource;
 
+
     public Session(String username, Environment environment) {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
         this.environment = environment;
         this.env = Env.DEV; //Default env for new session
         dataSource = dataSource();
+        addMetadataToSession();
+    }
+
+    private void addMetadataToSession() {
+        VaadinSession.getCurrent().setAttribute("H2.tblQuery", environment.getProperty("spring.datasource.utils.H2.tblQuery"));
+        VaadinSession.getCurrent().setAttribute("H2.colQuery", environment.getProperty("spring.datasource.utils.H2.colQuery"));
+        VaadinSession.getCurrent().setAttribute("Oracle.tblQuery", environment.getProperty("spring.datasource.utils.Oracle.tblQuery"));
+        VaadinSession.getCurrent().setAttribute("Oracle.tblQuery", environment.getProperty("spring.datasource.utils.Oracle.colQuery"));
     }
 
     public String getSessionId() {

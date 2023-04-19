@@ -27,8 +27,9 @@ import static ex.rr.adminpanel.ui.utils.Utils.displayNotification;
 @RolesAllowed({"REPORTS", "ADMIN"})
 public class TableReportView extends VerticalLayout {
 
-    private static final String TABLES_QUERY = "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA<>'INFORMATION_SCHEMA'";
-    private static final String COLUMNS_QUERY = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='${SCHEMA}' AND TABLE_NAME='${TABLE}';";
+    public static final String TBL = "TBL";
+    public static final String SCH = "SCH";
+    public static final String COL = "COL";
 
     @Autowired
     QueryResultSetService queryService;
@@ -76,15 +77,11 @@ public class TableReportView extends VerticalLayout {
 
         Set<HashMap<String, Object>> rows = tableGrid.getSelectedItems();
         Map<String, Object> queryParams = new HashMap<>();
-        rows.forEach(t -> {
-            String schemaCol = t.keySet().stream().filter(s -> s.contains("SCHEMA")).findFirst().orElseThrow();
-            String tableCol = t.keySet().stream().filter(s -> s.contains("TABLE") && !s.equals(schemaCol)).findFirst().orElseThrow();
-            queryParams.put("TABLE", String.format("%s.%s",
-                    t.get(schemaCol).toString(),
-                    t.get(tableCol).toString()));
-        });
+        rows.forEach(t -> queryParams.put("TABLE", String.format("%s.%s",
+                t.get(SCH).toString(),
+                t.get(TBL).toString())));
         queryParams.put("COLUMNS", columnGrid.getSelectedItems().stream().map(t ->
-                t.get("COLUMN_NAME").toString()).toList());
+                t.get(COL).toString()).toList());
 
         String query = String.format("SELECT %s FROM %s",
                 String.join(", ", (List<String>) queryParams.get("COLUMNS")),
@@ -103,26 +100,19 @@ public class TableReportView extends VerticalLayout {
 
     private void fetchColumns(String schemaName, String tableName) {
         colLayout.removeAll();
-        colLayout.add(columnGrid = queryService
-                .query(COLUMNS_QUERY
-                                .replace("${SCHEMA}", schemaName)
-                                .replace("${TABLE}", tableName)
-                        , null
-                        , Grid.SelectionMode.MULTI));
+        colLayout.add(columnGrid = queryService.getTableColumns(schemaName, tableName));
     }
 
     @PostConstruct
     private void loadData() {
-        tables.add("Tables", tableGrid = queryService.query(TABLES_QUERY, null, Grid.SelectionMode.SINGLE));
+        tables.add("Tables", tableGrid = queryService.getTables());// query(TABLES_QUERY, null, Grid.SelectionMode.SINGLE));
 
         tableGrid.addSelectionListener(e -> {
             Set<HashMap<String, Object>> rows = tableGrid.getSelectedItems();
             rows.forEach(r ->
             {
-                String schemaCol = r.keySet().stream().filter(s -> s.contains("SCHEMA")).findFirst().orElseThrow();
-                String tableCol = r.keySet().stream().filter(s -> s.contains("TABLE") && !s.equals(schemaCol)).findFirst().orElseThrow();
-                String schemaName = r.get(schemaCol).toString();
-                String tableName = r.get(tableCol).toString();
+                String schemaName = r.get(SCH).toString();
+                String tableName = r.get(TBL).toString();
                 fetchColumns(schemaName, tableName);
             });
         });
