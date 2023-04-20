@@ -9,10 +9,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ex.rr.adminpanel.database.Trigger;
+import ex.rr.adminpanel.data.database.Trigger;
 import ex.rr.adminpanel.ui.forms.TriggerForm;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
-import ex.rr.adminpanel.services.TriggerService;
+import ex.rr.adminpanel.data.services.TriggerService;
 import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "triggers", layout = MainLayout.class)
