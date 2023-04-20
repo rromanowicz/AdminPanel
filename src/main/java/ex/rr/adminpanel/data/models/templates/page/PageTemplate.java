@@ -1,6 +1,7 @@
 package ex.rr.adminpanel.data.models.templates.page;
 
 import ex.rr.adminpanel.data.database.Template;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @Data
 public class PageTemplate {
 
+    @NotNull
     private String name;
     private String owner; //TODO change when user entity is created
     private PageVisibility visibility;

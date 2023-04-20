@@ -1,11 +1,10 @@
 package ex.rr.adminpanel.data.database;
 
 import ex.rr.adminpanel.data.models.templates.page.PageTemplate;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Data;
+
+
 
 /**
  * The {@code Template} class represents the template database entity
@@ -20,12 +19,15 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Table(name = "T_TEMPLATE")
 public class Template {
 
     @Id
     @GeneratedValue
     private Integer id;
 
+    @Lob
+    @Column(columnDefinition = "CLOB NOT NULL")
     private String template;
 
     private boolean active;
