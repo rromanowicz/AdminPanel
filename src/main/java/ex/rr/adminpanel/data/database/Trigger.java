@@ -28,7 +28,7 @@ import jakarta.validation.constraints.NotNull;
  * @see     TaskDefinition
  */
 @Entity
-@Table(name = "TRIGGER")
+@Table(name = "T_TRIGGER")
 public class Trigger {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,13 +55,15 @@ public class TemplateService {
 
 
     public void saveTemplate(Template template) {
+        if (template.getId() != null) {
+            Optional<Template> optionalTemplate = templateRepository.findById(template.getId());
+            pageTemplateMap.remove(Objects.requireNonNull(parseTemplate(optionalTemplate.orElseThrow())).getName());
+        }
         Template saved = templateRepository.save(template);
         PageTemplate pageTemplate = parseTemplate(saved);
         assert pageTemplate != null;
         if (template.isActive()) {
             pageTemplateMap.put(pageTemplate.getName(), pageTemplate);
-        } else {
-            pageTemplateMap.remove(pageTemplate.getName());
         }
     }
 
