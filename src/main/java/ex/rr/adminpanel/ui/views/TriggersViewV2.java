@@ -15,12 +15,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ex.rr.adminpanel.database.Trigger;
-import ex.rr.adminpanel.enums.ActionType;
-import ex.rr.adminpanel.enums.InputType;
+import ex.rr.adminpanel.data.database.Trigger;
+import ex.rr.adminpanel.data.enums.ActionType;
+import ex.rr.adminpanel.data.enums.InputType;
 import ex.rr.adminpanel.ui.forms.TriggerForm;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
-import ex.rr.adminpanel.services.TriggerService;
+import ex.rr.adminpanel.data.services.TriggerService;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.List;

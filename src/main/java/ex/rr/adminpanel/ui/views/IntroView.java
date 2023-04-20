@@ -8,7 +8,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
 
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "home", layout = MainLayout.class)
 @PageTitle("Intro")
 @AnonymousAllowed
 public class IntroView extends VerticalLayout {

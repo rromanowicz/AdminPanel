@@ -9,9 +9,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ex.rr.adminpanel.exceptions.UserInputException;
+import ex.rr.adminpanel.data.exceptions.UserInputException;
+import ex.rr.adminpanel.data.services.QueryResultSetService;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
-import ex.rr.adminpanel.services.QueryService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,8 @@ import static ex.rr.adminpanel.ui.utils.Utils.displayNotification;
 public class QueryReportView extends VerticalLayout {
 
     @Autowired
-    QueryService queryService;
+    QueryResultSetService queryService;
+
 
     QueryReportView() {
         setAlignItems(Alignment.CENTER);
@@ -43,7 +44,7 @@ public class QueryReportView extends VerticalLayout {
 
         Button button = new Button("Execute", event -> {
             try {
-                add(queryService.withQuery(reportQuery.getValue()).toGrid(Grid.SelectionMode.NONE));
+                add(queryService.query(reportQuery.getValue(), null, Grid.SelectionMode.NONE));
                 reportCriteria.close();
             } catch (PersistenceException e) {
                 log.error(e.getMessage());

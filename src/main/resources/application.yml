@@ -25,41 +25,56 @@ spring:
 
 
   datasource:
+    jdbcUrl: jdbc:h2:mem:testDb
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: org.h2.Driver
+
     local:
-      jdbcUrl: jdbc:h2:mem:localDb
-      username: ${DB_USER}
-      password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
+      jdbcUrl: jdbc:h2:mem:localDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:local_data.sql';
+      username: sa
+      password: password
       driverClassName: org.h2.Driver
     dev:
-      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:dev_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     sit:
-      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:sit_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     sat:
-      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql';
+      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:sat_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
     prod:
-      jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:data.sql';
+      jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:prod_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
-      platform: h2
-      initialization-mode: always
       driverClassName: org.h2.Driver
+
+    utils:
+      H2:
+        tblQuery: SELECT TABLE_SCHEMA SCH, TABLE_NAME TBL FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA<>'INFORMATION_SCHEMA';
+        colQuery: SELECT COLUMN_NAME AS COL, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='{SCHEMA}' AND TABLE_NAME='{TABLE}';
+      Oracle:
+        tblQuery: SELECT OWNER AS SCH, VIEW_NAME AS TBL FROM ALL_VIEWS WHERE OWNER IN ('${DB_USER}');
+        colQuery: SELECT COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER='{SCHEMA}' AND TABLE_NAME='{TABLE}' AND COLUMN_ID IS NOT NULL ORDER BY COLUMN_ID;
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
 
 vaadin:
   whitelisted-packages: com.vaadin,org.vaadin,com.example.vaadin

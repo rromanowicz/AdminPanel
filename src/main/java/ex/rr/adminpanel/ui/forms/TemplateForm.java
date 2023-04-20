@@ -15,7 +15,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import ex.rr.adminpanel.database.Template;
+import ex.rr.adminpanel.data.database.Template;
 import lombok.Data;
 
 @Data

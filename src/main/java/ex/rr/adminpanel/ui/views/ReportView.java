@@ -17,12 +17,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import ex.rr.adminpanel.data.models.templates.page.Action;
+import ex.rr.adminpanel.data.models.templates.page.Filter;
+import ex.rr.adminpanel.data.models.templates.page.PageSection;
+import ex.rr.adminpanel.data.models.templates.page.PageTemplate;
+import ex.rr.adminpanel.data.services.QueryResultSetService;
+import ex.rr.adminpanel.data.services.TemplateService;
 import ex.rr.adminpanel.ui.handler.SimpleErrorHandler;
-import ex.rr.adminpanel.models.templates.page.Filter;
-import ex.rr.adminpanel.models.templates.page.PageSection;
-import ex.rr.adminpanel.models.templates.page.PageTemplate;
-import ex.rr.adminpanel.services.QueryService;
-import ex.rr.adminpanel.services.TemplateService;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ public class ReportView extends VerticalLayout {
     private TemplateService templateService;
 
     @Autowired
-    private QueryService queryService;
+    private QueryResultSetService queryService;
 
 
     private final ComboBox<String> report;
@@ -194,9 +195,12 @@ public class ReportView extends VerticalLayout {
         filterMap.put(column, filter);
     }
 
-    @NotNull
+    private Grid<HashMap<String, Object>> getQueryResultGrid(String query, List<Action> actions) {
+        return queryService.query(query, actions, Grid.SelectionMode.NONE);
+    }
+
     private VerticalLayout getDataGrid(PageSection section) {
-        return getView(queryService.withQuery(section.getQuery()).withActions(section.getDataGrid().getActions()).toGrid(Grid.SelectionMode.NONE));
+        return getView(getQueryResultGrid(section.getQuery(), section.getDataGrid().getActions()));
     }
 
     private Grid<String> getSelectionGrid(List<String> columns, List<String> selected) {
@@ -212,7 +216,6 @@ public class ReportView extends VerticalLayout {
         return grid;
     }
 
-    @NotNull
     private VerticalLayout getReport(PageSection section) {
         VerticalLayout vl = new VerticalLayout();
 
@@ -233,14 +236,14 @@ public class ReportView extends VerticalLayout {
         refresh.addClickListener(event -> {
             String query = getQuery(section, dimensions, facts);
             reportLayout.removeAll();
-            reportLayout.add(getView(queryService.withQuery(query).toGrid(Grid.SelectionMode.NONE)));
+            reportLayout.add(getView(getQueryResultGrid(query, null)));
             reportAccordion.open(1);
         });
 
         criteriaLayout.add(criteriaHL, refresh);
 
         reportAccordion.add(new AccordionPanel("Criteria", criteriaLayout));
-        reportLayout.add(getView(queryService.withQuery(getQuery(section, dimensions, facts)).toGrid(Grid.SelectionMode.NONE)));
+        reportLayout.add(getView(getQueryResultGrid(getQuery(section, dimensions, facts), null)));
         reportAccordion.add("Report", reportLayout);
 
         reportAccordion.open(1);
@@ -339,7 +342,6 @@ public class ReportView extends VerticalLayout {
         }
     }
 
-    @NotNull
     private VerticalLayout getView(Component component) {
         VerticalLayout sectionLayout = new VerticalLayout();
         sectionLayout.setWidthFull();

@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleErrorHandler implements ErrorHandler {
 
-
     @Override
     public void error(ErrorEvent errorEvent) {
         log.error("Internal error.", errorEvent.getThrowable());
