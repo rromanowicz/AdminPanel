@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * The {@code QueryService} service class for SQL execution and processing.
+ * The {@code QueryResultSetService} service class for SQL execution and processing based on ResultSet element.
  *
  * @author rromanowicz
  */
@@ -30,8 +30,10 @@ public class QueryResultSetService {
     /**
      * Adds query to be used for processing.
      *
-     * @param query query to be used for processing
-     * @return QueryService
+     * @param query                             Query to be used for processing.
+     * @param actions                           Actions to be added in data grid.
+     * @param selectionMode                     Result grid selection mode.
+     * @return Grid<HashMap<String, Object>>    Grid with SQL query results.
      */
     public Grid<HashMap<String, Object>> query(String query, List<Action> actions, Grid.SelectionMode selectionMode) {
         validateQuery(query);
@@ -51,9 +53,9 @@ public class QueryResultSetService {
     }
 
     /**
-     * Adds query to be used for processing.
+     * Returns database views available for current db user.
      *
-     * @return Grid<HashMap < String, Object>>
+     * @return Grid<HashMap<String, Object>>
      */
     public Grid<HashMap<String, Object>> getTables() {
         Connection connection;
@@ -74,9 +76,11 @@ public class QueryResultSetService {
     }
 
     /**
-     * Adds query to be used for processing.
+     * Returns columns available in given table/view.
      *
-     * @return Grid<HashMap < String, Object>>
+     * @param schema
+     * @param table
+     * @return Grid<HashMap<String, Object>>
      */
     public Grid<HashMap<String, Object>> getTableColumns(String schema, String table) {
         Connection connection;
@@ -99,10 +103,12 @@ public class QueryResultSetService {
 
 
     /**
-     * Executes query provided with 'withQuery()' method and returns {@link Grid} containing results.
+     * Transforms {@link ResultSet} into {@link Grid} containing results.
      *
-     * @param selectionMode selection mode to be applied on result Grid
-     * @return Grid of Tuples
+     * @param rs            ResultSet to be processed.
+     * @param actions       Actions to ba added to grid.
+     * @param selectionMode selection mode to be applied on result Grid.
+     * @return Grid<HashMap<String, Object>>
      */
     private Grid<HashMap<String, Object>> toGrid(ResultSet rs, List<Action> actions, Grid.SelectionMode selectionMode) {
         Grid<HashMap<String, Object>> grid = new Grid<>();
@@ -181,7 +187,6 @@ public class QueryResultSetService {
         for (Map.Entry<String, String> entry : action.getData()) {
             str = str.replace(String.format("${%s}", entry.getKey()), row.get(entry.getValue()).toString());
         }
-
         return str;
     }
 

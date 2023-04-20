@@ -1,5 +1,6 @@
 package ex.rr.adminpanel.services;
 
+import ex.rr.adminpanel.ui.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -7,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * The {@code SchedulingService} service class for Trigger execution related actions.
  *
- * @author  rromanowicz
- * @see     TaskScheduler
+ * @author rromanowicz
+ * @see TaskScheduler
  */
 @Slf4j
 @Service
@@ -67,10 +67,15 @@ public class SchedulingService {
         }
     }
 
+    /**
+     * Returns username of currently logged user.
+     *
+     * @return username
+     */
     @Nullable
     private static String getUser() {
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            return StringUtils.capitalize(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (Utils.getUserSession() != null) {
+            return StringUtils.capitalize(Utils.getUserSession().getUsername());
         } else {
             return "Root";
         }

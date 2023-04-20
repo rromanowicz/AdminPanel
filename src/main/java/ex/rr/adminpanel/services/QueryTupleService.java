@@ -6,7 +6,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import ex.rr.adminpanel.exceptions.UserInputException;
 import ex.rr.adminpanel.models.templates.page.Action;
-import ex.rr.adminpanel.ui.Session;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TupleElement;
@@ -14,9 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -44,29 +40,6 @@ public class QueryTupleService {
         validateQuery(query);
         this.queryResults = entityManager.createNativeQuery(query, Tuple.class).getResultList();
         this.actions = null;
-        return this;
-    }
-
-
-    public QueryTupleService query(Session session, String query) {
-        validateQuery(query);
-
-        try {
-            Connection connection = session.getDataSource().getConnection();
-            ResultSet resultSet = connection.prepareStatement(query).executeQuery();
-            int columnCount = resultSet.getMetaData().getColumnCount();
-            if (resultSet.next()) {
-                for (int i = 1; i < columnCount; i++) {
-                    System.out.printf("[%s] %s: %s%n",
-                            session.getSessionId(),
-                            resultSet.getMetaData().getColumnName(i),
-                            resultSet.getString(i));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
         return this;
     }
 

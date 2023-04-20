@@ -11,12 +11,22 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinSession;
-import ex.rr.adminpanel.enums.Env;
 import ex.rr.adminpanel.ui.Session;
 import org.springframework.core.env.Environment;
 
+/**
+ * Utility class.
+ *
+ * @author rromanowicz
+ */
 public class Utils {
 
+    /**
+     * Displays a popup notification with 5sec timeout.
+     *
+     * @param theme        Notification theme.
+     * @param messageLines Each entry is displayed in separate line.
+     */
     public static void displayNotification(NotificationVariant theme, String... messageLines) {
         Notification notification = new Notification();
         notification.addThemeVariants(theme);
@@ -39,20 +49,12 @@ public class Utils {
         notification.open();
     }
 
-    public static Env getEnv() {
-        VaadinSession session = VaadinSession.getCurrent();
-        try {
-            return (Env) session.getAttribute("env");
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static void setEnv(Env env) {
-        VaadinSession session = VaadinSession.getCurrent();
-        session.setAttribute("env", env);
-    }
-
+    /**
+     * Returns current user session.
+     *
+     * @return session
+     * @see Session
+     */
     public static Session getUserSession() {
         VaadinSession session = VaadinSession.getCurrent();
         try {
@@ -63,12 +65,22 @@ public class Utils {
     }
 
 
+    /**
+     * Clears user session from Vaadin context.
+     */
     public static void clearSession() {
         VaadinSession session = VaadinSession.getCurrent();
         session.setAttribute("userSession", null);
     }
 
 
+    /**
+     * Creates Session bean and stores in Vaadin context.
+     *
+     * @param username    User login.
+     * @param environment Application properties environment.
+     * @see Session
+     */
     public static void createSession(String username, Environment environment) {
         VaadinSession session = VaadinSession.getCurrent();
         session.setAttribute("userSession", new Session(username, environment));

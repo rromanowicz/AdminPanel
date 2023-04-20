@@ -22,6 +22,18 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
         return Objects.requireNonNull(Utils.getUserSession()).getEnv();
     }
 
+    /**
+     * Initializes data connections available in Router
+     *
+     * @param defaultEnv        Default environment. Selected on initialization.
+     * @param localDataSource
+     * @param devDataSource
+     * @param sitDataSource
+     * @param satDataSource
+     * @param prodDataSource
+     *
+     * @see AbstractRoutingDataSource
+     */
     public void initDatasource(Env defaultEnv,
                                DataSource localDataSource,
                                DataSource devDataSource,
@@ -29,11 +41,11 @@ public class DataSourceRouting extends AbstractRoutingDataSource {
                                DataSource satDataSource,
                                DataSource prodDataSource) {
         Map<Object, Object> dataSourceMap = new HashMap<>();
+        dataSourceMap.put(Env.LOCAL, localDataSource);
         dataSourceMap.put(Env.DEV, devDataSource);
         dataSourceMap.put(Env.SIT, sitDataSource);
         dataSourceMap.put(Env.SAT, satDataSource);
         dataSourceMap.put(Env.PROD, prodDataSource);
-        dataSourceMap.put(Env.LOCAL, localDataSource);
         this.setTargetDataSources(dataSourceMap);
         this.setDefaultTargetDataSource(dataSourceMap.get(defaultEnv));
         this.afterPropertiesSet();
