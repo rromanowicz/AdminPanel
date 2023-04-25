@@ -35,8 +35,8 @@ public class TemplateService {
     @PostConstruct
     private void init() {
         List<Template> all = templateRepository.findAllByActive(true);
-        all.forEach(template -> template.setPageTemplate(parseTemplate(template)));
-        pageTemplateMap = all.stream().collect(Collectors.toMap(it -> it.getPageTemplate().getName(), Template::getPageTemplate));
+
+        pageTemplateMap = all.stream().map(this::parseTemplate).toList().stream().collect(Collectors.toMap(PageTemplate::getName, e -> e));
     }
 
     public PageTemplate getTemplateByName(String name) {
@@ -69,7 +69,7 @@ public class TemplateService {
 
     private PageTemplate parseTemplate(Template t) {
         try {
-            PageTemplate template = objectMapper.readValue(t.getTemplate(), PageTemplate.class);
+            PageTemplate template = objectMapper.readValue(t.getTemplateJson(), PageTemplate.class);
             if (template.getGlobalFilters() != null && template.getGlobalFilters().size() > 0) {
                 template.getGlobalFilters().forEach(filter -> filter.setColumnType(
                         template.getSections().stream().flatMap(pageSection -> pageSection.getColumns().stream()).toList()

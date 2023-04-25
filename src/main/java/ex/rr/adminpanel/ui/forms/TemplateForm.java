@@ -16,13 +16,11 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import ex.rr.adminpanel.data.database.Template;
-import lombok.Data;
 
-@Data
 public class TemplateForm extends FormLayout {
 
     IntegerField templateId = new IntegerField("Id");
-    TextArea template = new TextArea("Template", "", "");
+    TextArea templateJson = new TextArea("Template", "", "");
 
     Checkbox active = new Checkbox("Active");
 
@@ -38,7 +36,7 @@ public class TemplateForm extends FormLayout {
         addClassName("trigger-form");
         binder.bindInstanceFields(this);
 
-        this.add(templateId, template, active, createButtonsLayout());
+        this.add(templateId, templateJson, active, createButtonsLayout());
     }
 
     public void setPageTemplate(Template pageTemplate) {
@@ -74,7 +72,7 @@ public class TemplateForm extends FormLayout {
     }
 
     public static abstract class TemplateFormEvent extends ComponentEvent<TemplateForm> {
-        private Template pageTemplate;
+        private final Template pageTemplate;
 
         protected TemplateFormEvent(TemplateForm source, Template pageTemplate) {
             super(source, false);

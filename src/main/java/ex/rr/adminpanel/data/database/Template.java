@@ -28,11 +28,8 @@ public class Template {
 
     @Lob
     @Column(columnDefinition = "CLOB NOT NULL")
-    private String template;
+    private String templateJson;
 
     private boolean active;
-
-    @Transient
-    private PageTemplate pageTemplate;
 
 }

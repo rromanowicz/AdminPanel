@@ -15,7 +15,7 @@ public class SimpleErrorHandler implements ErrorHandler {
         log.error("Internal error.", errorEvent.getThrowable());
         if(UI.getCurrent() != null) {
             UI.getCurrent().access(() -> Utils.displayNotification(
-                    NotificationVariant.LUMO_ERROR, errorEvent.getThrowable().getMessage()));
+                    NotificationVariant.LUMO_ERROR, errorEvent.getThrowable().getCause().toString().split(";")[0]));
         }
     }
 }

@@ -36,7 +36,7 @@ public class TemplateView extends VerticalLayout {
 
         this.templateService = templateService;
 
-        Button addTrigger = new Button("Add User");
+        Button addTrigger = new Button("Add Template");
         addTrigger.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addTrigger.addClickListener(event -> editUser(null));
         HorizontalLayout header = new HorizontalLayout(addTrigger);
@@ -53,7 +53,7 @@ public class TemplateView extends VerticalLayout {
 
     private void configureGrid() {
         grid.addColumn(Template::getId).setHeader("Id").setFlexGrow(0);
-        grid.addColumn(Template::getTemplate).setHeader("Template").setFlexGrow(5);
+        grid.addColumn(Template::getTemplateJson).setHeader("Template").setFlexGrow(5);
         grid.addColumn(Template::isActive).setHeader("Enabled").setFlexGrow(0);
         grid.addComponentColumn(trigger -> {
             Button editButton = new Button("Edit");

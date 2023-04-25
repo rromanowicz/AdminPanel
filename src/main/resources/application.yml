@@ -32,8 +32,8 @@ spring:
 
     local:
       jdbcUrl: jdbc:h2:mem:localDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:local_data.sql';
-      username: sa
-      password: password
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver
     dev:
       jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:dev_data.sql';
@@ -62,7 +62,7 @@ spring:
         colQuery: SELECT COLUMN_NAME AS COL, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='{SCHEMA}' AND TABLE_NAME='{TABLE}';
       Oracle:
         tblQuery: SELECT OWNER AS SCH, VIEW_NAME AS TBL FROM ALL_VIEWS WHERE OWNER IN ('${DB_USER}');
-        colQuery: SELECT COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER='{SCHEMA}' AND TABLE_NAME='{TABLE}' AND COLUMN_ID IS NOT NULL ORDER BY COLUMN_ID;
+        colQuery: SELECT COLUMN_NAME AS COL, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER='{SCHEMA}' AND TABLE_NAME='{TABLE}' AND COLUMN_ID IS NOT NULL ORDER BY COLUMN_ID;
 
   mail:
     host: smtp.gmail.com

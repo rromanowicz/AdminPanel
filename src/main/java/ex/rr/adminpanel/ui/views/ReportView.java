@@ -26,7 +26,6 @@ import ex.rr.adminpanel.data.services.TemplateService;
 import ex.rr.adminpanel.ui.handler.SimpleErrorHandler;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
 import jakarta.annotation.security.RolesAllowed;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -133,7 +132,6 @@ public class ReportView extends VerticalLayout {
     }
 
 
-    @NotNull
     private VerticalLayout getGlobalFilters(List<Filter> filters) {
         if (filterLayout == null) {
             filterLayout = new VerticalLayout();
@@ -312,9 +310,9 @@ public class ReportView extends VerticalLayout {
                 case TEXT -> String.format("%s%s'%s'", key, operator, filter.getValue());
                 case NUMBER -> String.format("%s%s%s", key, operator, filter.getValue());
                 case DATE ->
-                        String.format("%s%s'%s'", key, operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", key, operator, getDate(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
                 case DATETIME ->
-                        String.format("%s%s'%s'", key, operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
+                        String.format("%s%sTO_DATE('%s','YYYY-MM-DD')", key, operator, getDateTime(filter.getValue()).format(DateTimeFormatter.ISO_DATE));
             });
         });
         return str.toString();

@@ -32,18 +32,18 @@ import jakarta.validation.constraints.NotNull;
 public class Trigger {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    private String id;
     @NotEmpty
-    String input;
+    private String input;
     @NotNull
-    InputType inputType;
+    private InputType inputType;
     @NotNull
-    ActionType actionType;
+    private ActionType actionType;
     @NotEmpty
     @Cron
-    String cron;
+    private String cron;
     @NotNull
-    Boolean enabled;
+    private Boolean enabled;
 
     public String getId() {
         return id;
