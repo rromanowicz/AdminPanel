@@ -38,7 +38,7 @@ public class TemplateView extends VerticalLayout {
 
         Button addTrigger = new Button("Add Template");
         addTrigger.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        addTrigger.addClickListener(event -> editUser(null));
+        addTrigger.addClickListener(event -> editTemplate(null));
         HorizontalLayout header = new HorizontalLayout(addTrigger);
         header.getStyle().set("flex-wrap", "wrap");
         header.setJustifyContentMode(JustifyContentMode.END);
@@ -57,7 +57,7 @@ public class TemplateView extends VerticalLayout {
         grid.addColumn(Template::isActive).setHeader("Enabled").setFlexGrow(0);
         grid.addComponentColumn(trigger -> {
             Button editButton = new Button("Edit");
-            editButton.addClickListener(e -> editUser(trigger));
+            editButton.addClickListener(e -> editTemplate(trigger));
             return editButton;
         }).setWidth("150px").setFlexGrow(0);
     }
@@ -66,7 +66,7 @@ public class TemplateView extends VerticalLayout {
         grid.setItems(templateService.findAll());
     }
 
-    private void editUser(Template template) {
+    private void editTemplate(Template template) {
         Template tempTemplate = (template == null) ? new Template() : template;
         dialog = new Dialog();
         dialog.setHeaderTitle("User");

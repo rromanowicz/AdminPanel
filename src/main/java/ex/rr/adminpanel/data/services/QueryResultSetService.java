@@ -30,23 +30,52 @@ public class QueryResultSetService {
     /**
      * Adds query to be used for processing.
      *
-     * @param query                             Query to be used for processing.
-     * @param actions                           Actions to be added in data grid.
-     * @param selectionMode                     Result grid selection mode.
-     * @return Grid<HashMap<String, Object>>    Grid with SQL query results.
+     * @param query         Query to be used for processing.
+     * @param actions       Actions to be added in data grid.
+     * @param selectionMode Result grid selection mode.
+     * @return Grid<HashMap < String, Object>>    Grid with SQL query results.
      */
     public Grid<HashMap<String, Object>> query(String query, List<Action> actions, Grid.SelectionMode selectionMode) {
         validateQuery(query);
-        Connection connection;
         Grid<HashMap<String, Object>> grid;
-        try {
-            connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
-            ResultSet queryResults = connection.prepareStatement(query).executeQuery();
-            grid = toGrid(queryResults, actions, selectionMode);
-            queryResults.close();
-            connection.close();
+        try (Connection connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection()) {
+            try (ResultSet queryResults = connection.prepareStatement(query).executeQuery()) {
+                grid = toGrid(queryResults, actions, selectionMode);
+            } catch (SQLException e) {
+                return fallbackGrid("Query execution error", e.getMessage());
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return fallbackGrid("Connection error", e.getMessage());
+        }
+
+        return grid;
+    }
+
+    /**
+     * Adds query to be used for processing.
+     *
+     * @param property      Name of the property with query.
+     * @param replacements  Map with values to substitute in query.
+     * @param selectionMode Result grid selection mode.
+     * @return Grid<HashMap < String, Object>>    Grid with SQL query results.
+     */
+    public Grid<HashMap<String, Object>> propertyQuery(String property, Map<String, String> replacements, Grid.SelectionMode selectionMode) {
+        Grid<HashMap<String, Object>> grid;
+        try (Connection connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection()) {
+            String dbName = connection.getMetaData().getDatabaseProductName();
+            String query = (String) VaadinSession.getCurrent().getAttribute(dbName + "." + property);
+            if (replacements != null) {
+                for (Map.Entry<String, String> entry : replacements.entrySet()) {
+                    query = query.replace(entry.getKey(), entry.getValue());
+                }
+            }
+            try (ResultSet queryResults = connection.prepareStatement(query).executeQuery()) {
+                grid = toGrid(queryResults, null, selectionMode);
+            } catch (SQLException e) {
+                return fallbackGrid("Query execution error", e.getMessage());
+            }
+        } catch (SQLException e) {
+            return fallbackGrid("Connection error", e.getMessage());
         }
 
         return grid;
@@ -55,24 +84,10 @@ public class QueryResultSetService {
     /**
      * Returns database views available for current db user.
      *
-     * @return Grid<HashMap<String, Object>>
+     * @return Grid<HashMap < String, Object>>
      */
     public Grid<HashMap<String, Object>> getTables() {
-        Connection connection;
-        Grid<HashMap<String, Object>> grid;
-        try {
-            connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
-            String dbName = connection.getMetaData().getDatabaseProductName();
-            String query = (String) VaadinSession.getCurrent().getAttribute(dbName + ".tblQuery");
-            ResultSet queryResults = connection.prepareStatement(query).executeQuery();
-            grid = toGrid(queryResults, null, Grid.SelectionMode.SINGLE);
-            queryResults.close();
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return grid;
+        return propertyQuery("tblQuery", null, Grid.SelectionMode.SINGLE);
     }
 
     /**
@@ -80,27 +95,11 @@ public class QueryResultSetService {
      *
      * @param schema
      * @param table
-     * @return Grid<HashMap<String, Object>>
+     * @return Grid<HashMap < String, Object>>
      */
     public Grid<HashMap<String, Object>> getTableColumns(String schema, String table) {
-        Connection connection;
-        Grid<HashMap<String, Object>> grid;
-        try {
-            connection = Objects.requireNonNull(Utils.getUserSession()).getDataSource().getConnection();
-            String dbName = connection.getMetaData().getDatabaseProductName().toUpperCase();
-            String query = (String) VaadinSession.getCurrent().getAttribute(dbName + ".colQuery");
-            ResultSet queryResults = connection.prepareStatement(query
-                    .replace("{SCHEMA}", schema).replace("{TABLE}", table)).executeQuery();
-            grid = toGrid(queryResults, null, Grid.SelectionMode.MULTI);
-            queryResults.close();
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return grid;
+        return propertyQuery("colQuery", Map.of("{SCHEMA}", schema, "{TABLE}", table), Grid.SelectionMode.MULTI);
     }
-
 
     /**
      * Transforms {@link ResultSet} into {@link Grid} containing results.
@@ -108,7 +107,7 @@ public class QueryResultSetService {
      * @param rs            ResultSet to be processed.
      * @param actions       Actions to ba added to grid.
      * @param selectionMode selection mode to be applied on result Grid.
-     * @return Grid<HashMap<String, Object>>
+     * @return Grid<HashMap < String, Object>>
      */
     private Grid<HashMap<String, Object>> toGrid(ResultSet rs, List<Action> actions, Grid.SelectionMode selectionMode) {
         Grid<HashMap<String, Object>> grid = new Grid<>();
@@ -204,6 +203,12 @@ public class QueryResultSetService {
         if (!violations.isEmpty()) {
             throw new UserInputException("Unexpected comment in 'SELECT' query.");
         }
+    }
+
+    private Grid<HashMap<String, Object>> fallbackGrid(String message, String reason) {
+        Grid<HashMap<String, Object>> grid = new Grid<>();
+        Utils.displayNotification(NotificationVariant.LUMO_ERROR, message, reason);
+        return grid;
     }
 }
 

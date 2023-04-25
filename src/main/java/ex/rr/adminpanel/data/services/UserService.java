@@ -54,7 +54,7 @@ public class UserService implements UserDetailsManager, AuthenticationManager {
      *
      * @param user {@link User}
      */
-    public void createUser(User user) {
+    private void createUser(User user) {
         userRepository.save(user);
     }
 

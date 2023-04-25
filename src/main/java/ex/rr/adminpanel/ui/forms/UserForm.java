@@ -21,7 +21,6 @@ import ex.rr.adminpanel.data.database.User;
 import ex.rr.adminpanel.data.enums.RoleEnum;
 import lombok.Data;
 
-@Data
 public class UserForm extends FormLayout {
 
     IntegerField userId = new IntegerField("Id");
@@ -40,9 +39,6 @@ public class UserForm extends FormLayout {
 
     public UserForm() {
         userId.setReadOnly(true);
-        if(userId.getValue() == null){
-            username.setReadOnly(true);
-        }
         addClassName("trigger-form");
         binder.bindInstanceFields(this);
 
@@ -53,6 +49,10 @@ public class UserForm extends FormLayout {
         this.user = user;
         binder.bind(userId, "id");
         binder.readBean(user);
+
+        if(!username.getValue().isEmpty()){
+            username.setReadOnly(true);
+        }
     }
 
     private Component createButtonsLayout() {
@@ -82,7 +82,7 @@ public class UserForm extends FormLayout {
     }
 
     public static abstract class UserFormEvent extends ComponentEvent<UserForm> {
-        private User user;
+        private final User user;
 
         protected UserFormEvent(UserForm source, User user) {
             super(source, false);

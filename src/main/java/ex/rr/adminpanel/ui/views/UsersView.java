@@ -9,8 +9,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ex.rr.adminpanel.data.services.UserService;
 import ex.rr.adminpanel.data.database.User;
+import ex.rr.adminpanel.data.services.UserService;
 import ex.rr.adminpanel.ui.forms.UserForm;
 import ex.rr.adminpanel.ui.layouts.MainLayout;
 import jakarta.annotation.security.RolesAllowed;
@@ -77,7 +77,7 @@ public class UsersView extends VerticalLayout {
         UserForm form = new UserForm();
         form.setUser(tempUser);
         form.addListener(UserForm.SaveEvent.class, e -> {
-            if(user == null || user.getId() == null) {
+            if (user == null || user.getId() == null) {
                 userService.createUser(e.getUser());
             } else {
                 userService.updateUser(e.getUser());
