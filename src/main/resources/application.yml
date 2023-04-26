@@ -31,27 +31,27 @@ spring:
     driverClassName: org.h2.Driver
 
     local:
-      jdbcUrl: jdbc:h2:mem:localDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:local_data.sql';
+      jdbcUrl: jdbc:h2:mem:localDb;INIT=RUNSCRIPT FROM 'classpath:schema2.sql'\;RUNSCRIPT FROM 'classpath:local_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver
     dev:
-      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:dev_data.sql';
+      jdbcUrl: jdbc:h2:mem:devDb;INIT=RUNSCRIPT FROM 'classpath:schema2.sql'\;RUNSCRIPT FROM 'classpath:dev_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver
     sit:
-      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:sit_data.sql';
+      jdbcUrl: jdbc:h2:mem:sitDb;INIT=RUNSCRIPT FROM 'classpath:schema2.sql'\;RUNSCRIPT FROM 'classpath:sit_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver
     sat:
-      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:sat_data.sql';
+      jdbcUrl: jdbc:h2:mem:satDb;INIT=RUNSCRIPT FROM 'classpath:schema2.sql'\;RUNSCRIPT FROM 'classpath:sat_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver
     prod:
-      jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:prod_data.sql';
+      jdbcUrl: jdbc:h2:mem:prodDb;INIT=RUNSCRIPT FROM 'classpath:schema2.sql'\;RUNSCRIPT FROM 'classpath:prod_data.sql';
       username: ${DB_USER}
       password: ${DB_PASSWORD}
       driverClassName: org.h2.Driver

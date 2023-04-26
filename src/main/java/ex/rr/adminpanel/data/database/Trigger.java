@@ -2,6 +2,7 @@ package ex.rr.adminpanel.data.database;
 
 import ex.rr.adminpanel.data.annotations.Cron;
 import ex.rr.adminpanel.data.enums.ActionType;
+import ex.rr.adminpanel.data.enums.Env;
 import ex.rr.adminpanel.data.enums.InputType;
 import ex.rr.adminpanel.data.scheduler.TaskDefinition;
 import jakarta.persistence.*;
@@ -22,10 +23,10 @@ import jakarta.validation.constraints.NotNull;
  * </ul>
  * <p><i>Note: getters/setters intentionally created without Lombok.@Data to work with Vaadins Binder</i></p>
  *
- * @author  rromanowicz
- * @see     InputType
- * @see     ActionType
- * @see     TaskDefinition
+ * @author rromanowicz
+ * @see InputType
+ * @see ActionType
+ * @see TaskDefinition
  */
 @Entity
 @Table(name = "T_TRIGGER")
@@ -33,6 +34,7 @@ public class Trigger {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    private Env env;
     @NotEmpty
     private String input;
     @NotNull
@@ -51,6 +53,14 @@ public class Trigger {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Env getEnv() {
+        return env;
+    }
+
+    public void setEnv(Env env) {
+        this.env = env;
     }
 
     public String getInput() {

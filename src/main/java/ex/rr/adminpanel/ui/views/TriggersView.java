@@ -54,6 +54,7 @@ public class TriggersView extends VerticalLayout {
 
 
     private void configureGrid() {
+        grid.addColumn(Trigger::getEnv).setHeader("Env").setFlexGrow(1);
         grid.addColumn(Trigger::getInput).setHeader("Query").setFlexGrow(6);
         grid.addColumn(Trigger::getInputType).setHeader("Input Type").setFlexGrow(1);
         grid.addColumn(Trigger::getActionType).setHeader("Action Type").setFlexGrow(1);

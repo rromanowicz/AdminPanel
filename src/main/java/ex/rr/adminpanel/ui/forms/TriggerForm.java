@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -17,18 +18,18 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import ex.rr.adminpanel.data.database.Trigger;
 import ex.rr.adminpanel.data.enums.ActionType;
+import ex.rr.adminpanel.data.enums.Env;
 import ex.rr.adminpanel.data.enums.InputType;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class TriggerForm extends FormLayout {
 
+    ComboBox<Env> env = new ComboBox<>("Env", Env.values());
     ComboBox<InputType> inputType = new ComboBox<>("Input Type", InputType.values());
     ComboBox<ActionType> actionType = new ComboBox<>("Action Type", ActionType.values());
     TextField cron = new TextField("Cron", "", "");
-    ComboBox<Boolean> enabled = new ComboBox<>("Enabled", List.of(true, false));
+    Checkbox enabled = new Checkbox("Enabled");
     TextArea input = new TextArea("Input");
 
     Button save = new Button("Save");
@@ -43,7 +44,7 @@ public class TriggerForm extends FormLayout {
         addClassName("trigger-form");
         binder.bindInstanceFields(this);
 
-        this.add(inputType, actionType, cron, enabled, input, createButtonsLayout());
+        this.add(env, inputType, actionType, cron, enabled, input, createButtonsLayout());
         this.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 3));
         this.setColspan(input, 3);
     }

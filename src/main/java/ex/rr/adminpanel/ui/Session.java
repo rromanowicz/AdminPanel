@@ -31,13 +31,14 @@ public class Session {
     private final String username;
 
     private final DataSource dataSource;
+    private DataSourceRouting routingDataSource;
 
 
-    public Session(String username, Environment environment) {
+    public Session(String username, Environment environment, Env env) {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
         this.environment = environment;
-        this.env = Env.DEV; //Default env for new session
+        this.env = env; //Default env for new session
         dataSource = dataSource();
         addMetadataToSession();
     }
@@ -64,6 +65,7 @@ public class Session {
 
     public void setEnv(Env env) {
         this.env = env;
+        this.routingDataSource.setEnv(env);
     }
 
     public DataSource getDataSource() {
@@ -74,7 +76,7 @@ public class Session {
     @Primary
     @Autowired
     public DataSource dataSource() {
-        DataSourceRouting routingDataSource = new DataSourceRouting();
+        routingDataSource = new DataSourceRouting();
         routingDataSource.initDatasource(env, localDataSource(), devDataSource(), sitDataSource(), satDataSource(), prodDataSource());
         return routingDataSource;
     }

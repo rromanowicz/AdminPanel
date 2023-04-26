@@ -1,13 +1,11 @@
 package ex.rr.adminpanel.data.database.config;
 
 import ex.rr.adminpanel.data.enums.Env;
-import ex.rr.adminpanel.ui.utils.Utils;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * The {@code DataSourceRouting} class represents the DataSource Environment Router. Only the currently selected datasource will be used to execute db instructions.
@@ -17,20 +15,26 @@ import java.util.Objects;
  */
 public class DataSourceRouting extends AbstractRoutingDataSource {
 
+    private Env env;
+
     @Override
     protected Object determineCurrentLookupKey() {
-        return Objects.requireNonNull(Utils.getUserSession()).getEnv();
+        return env;
+    }
+
+    public void setEnv(Env env) {
+        this.env = env;
     }
 
     /**
      * Initializes data connections available in Router
      *
      * @param defaultEnv        Default environment. Selected on initialization.
-     * @param localDataSource
-     * @param devDataSource
-     * @param sitDataSource
-     * @param satDataSource
-     * @param prodDataSource
+     * @param localDataSource   Local
+     * @param devDataSource     Dev
+     * @param sitDataSource     Sit
+     * @param satDataSource     Sat
+     * @param prodDataSource    Prod
      *
      * @see AbstractRoutingDataSource
      */

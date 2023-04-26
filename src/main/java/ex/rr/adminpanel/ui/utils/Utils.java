@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinSession;
+import ex.rr.adminpanel.data.enums.Env;
 import ex.rr.adminpanel.ui.Session;
 import org.springframework.core.env.Environment;
 
@@ -83,6 +84,6 @@ public class Utils {
      */
     public static void createSession(String username, Environment environment) {
         VaadinSession session = VaadinSession.getCurrent();
-        session.setAttribute("userSession", new Session(username, environment));
+        session.setAttribute("userSession", new Session(username, environment, Env.DEV));
     }
 }

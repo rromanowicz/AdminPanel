@@ -4,18 +4,19 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.spring.annotation.SpringComponent;
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import ex.rr.adminpanel.data.exceptions.UserInputException;
 import ex.rr.adminpanel.data.models.templates.page.Action;
 import ex.rr.adminpanel.ui.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * The {@code QueryResultSetService} service class for SQL execution and processing based on ResultSet element.
@@ -23,8 +24,7 @@ import java.util.*;
  * @author rromanowicz
  */
 @Slf4j
-@SpringComponent
-@VaadinSessionScope
+@Service
 public class QueryResultSetService {
 
     /**
@@ -131,7 +131,6 @@ public class QueryResultSetService {
                     String object = rs.getObject(colIndex) == null ? "" : String.valueOf(rs.getObject(colIndex));
                     row.put(col, object);
                 }
-
                 rows.add(row);
             }
 
@@ -210,5 +209,27 @@ public class QueryResultSetService {
         Utils.displayNotification(NotificationVariant.LUMO_ERROR, message, reason);
         return grid;
     }
+
+    public Boolean query(DataSource dataSource, String data) {
+        return getResults.apply(dataSource,  data) > 0;
+    };
+
+    BiFunction<DataSource, String, Integer> getResults = (dataSource, s) -> {
+        String query = String.format("SELECT COUNT(1) CNT FROM (%s)", s);
+        try (Connection connection = dataSource.getConnection()) {
+
+            log.info(dataSource.getConnection().getMetaData().toString());
+            try (ResultSet queryResults = connection.prepareStatement(query).executeQuery()) {
+                queryResults.next();
+                return queryResults.getInt("CNT");
+            } catch (SQLException e) {
+                return null;
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+    };
+
+
 }
 

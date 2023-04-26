@@ -4,11 +4,14 @@ import ex.rr.adminpanel.data.database.Trigger;
 import ex.rr.adminpanel.data.database.TriggerRepository;
 import ex.rr.adminpanel.data.scheduler.TaskDefinition;
 import ex.rr.adminpanel.data.scheduler.TaskRunner;
+import ex.rr.adminpanel.ui.Session;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The {@code TriggerService} service class for Trigger related actions.
@@ -21,8 +24,9 @@ import java.util.List;
 @Service
 public class TriggerService {
 
+    private final Environment environment;
     private final SchedulingService schedulingService;
-    private final QueryTupleService queryTupleService;
+    private final QueryResultSetService queryResultSetService;
 
     private final TriggerRepository triggerRepository;
 
@@ -53,10 +57,19 @@ public class TriggerService {
     }
 
     private void scheduleTask(Trigger trigger) {
-        TaskRunner taskRunner = new TaskRunner(queryTupleService);
+        Session session = new Session("ROOT", environment, trigger.getEnv()); //Don't like this solution. To be refactored.
+        TaskRunner taskRunner = new TaskRunner(queryResultSetService, session);
         taskRunner.setTaskDefinition(
                 TaskDefinition.fromTrigger(trigger)
         );
         schedulingService.scheduleTask(trigger.getId(), taskRunner, trigger.getCron());
+    }
+
+    public void disableTask(String id) {
+        Optional<Trigger> trigger = triggerRepository.findById(id);
+        if(trigger.isPresent()){
+            trigger.get().setEnabled(false);
+            save(trigger.get());
+        }
     }
 }

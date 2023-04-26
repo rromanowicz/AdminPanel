@@ -30,6 +30,7 @@ public class TaskDefinition {
     private String cronExpression;
     private InputType inputType;
     private ActionType actionType;
+    private boolean cyclic;
     private String data;
 
     /**

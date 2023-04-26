@@ -1,9 +1,9 @@
 package ex.rr.adminpanel.data.scheduler;
 
-import ex.rr.adminpanel.data.services.QueryTupleService;
+import ex.rr.adminpanel.data.services.QueryResultSetService;
+import ex.rr.adminpanel.ui.Session;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
@@ -20,23 +20,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskRunner implements Runnable {
 
-    private ApplicationContext applicationContext;
-    private QueryTupleService queryTupleService;
+    private QueryResultSetService queryResultSetService;
+    private Session session;
+
 
     private TaskDefinition taskDefinition;
 
-    public TaskRunner() {
+    private TaskRunner() {
     }
 
-    public TaskRunner(QueryTupleService queryTupleService) {
+    public TaskRunner(QueryResultSetService queryResultSetService, Session session) {
         this();
-        this.queryTupleService = queryTupleService;
+        this.queryResultSetService = queryResultSetService;
+        this.session = session;
     }
 
     @Override
     public void run() {
         String output = switch (taskDefinition.getInputType()) {
-            case QUERY -> queryTupleService.withQuery(taskDefinition.getData()).toJson();
+            case QUERY -> queryResultSetService.query(session.dataSource(), taskDefinition.getData()).toString();
             case CURL -> null;
             case TEXT -> taskDefinition.getData();
         };
