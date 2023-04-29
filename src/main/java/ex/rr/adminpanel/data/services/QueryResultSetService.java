@@ -93,8 +93,8 @@ public class QueryResultSetService {
     /**
      * Returns columns available in given table/view.
      *
-     * @param schema
-     * @param table
+     * @param schema Schema name
+     * @param table  Table name
      * @return Grid<HashMap < String, Object>>
      */
     public Grid<HashMap<String, Object>> getTableColumns(String schema, String table) {
@@ -213,8 +213,6 @@ public class QueryResultSetService {
     public Boolean query(DataSource dataSource, String data) {
         return getRowCount.apply(dataSource, data) > 0;
     }
-
-    ;
 
     BiFunction<DataSource, String, Integer> getRowCount = (dataSource, s) -> {
         String query = String.format("SELECT COUNT(1) CNT FROM (%s)", s);
