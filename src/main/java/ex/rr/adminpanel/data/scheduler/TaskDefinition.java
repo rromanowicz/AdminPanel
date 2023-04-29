@@ -2,6 +2,7 @@ package ex.rr.adminpanel.data.scheduler;
 
 import ex.rr.adminpanel.data.database.Trigger;
 import ex.rr.adminpanel.data.enums.ActionType;
+import ex.rr.adminpanel.data.enums.Env;
 import ex.rr.adminpanel.data.enums.InputType;
 import lombok.Builder;
 import lombok.Data;
@@ -18,15 +19,16 @@ import lombok.Data;
  *     <li>{@code data} - Instructions used to fetch results.</li>
  * </ul>
  *
- * @author  rromanowicz
- * @see     InputType
- * @see     ActionType
- * @see     Trigger
+ * @author rromanowicz
+ * @see InputType
+ * @see ActionType
+ * @see Trigger
  */
 @Data
 @Builder
 public class TaskDefinition {
     private String id;
+    private Env env;
     private String cronExpression;
     private InputType inputType;
     private ActionType actionType;
@@ -35,13 +37,13 @@ public class TaskDefinition {
 
     /**
      * @param trigger {@code Trigger} entity
-     * @return        {@code TaskDefinition}
-     *
+     * @return {@code TaskDefinition}
      * @see Trigger
      */
     public static TaskDefinition fromTrigger(Trigger trigger) {
         return TaskDefinition.builder()
                 .id(trigger.getId())
+                .env(trigger.getEnv())
                 .cronExpression(trigger.getCron())
                 .inputType(trigger.getInputType())
                 .actionType(trigger.getActionType())

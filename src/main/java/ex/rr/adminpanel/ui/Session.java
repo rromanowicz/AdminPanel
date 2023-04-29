@@ -22,11 +22,10 @@ public class Session {
     private final String sessionId;
     private final String username;
 
-    private final DataSource dataSource;
-    private DataSourceRouting routingDataSource;
+    private final DataSourceRouting dataSource;
 
 
-    public Session(String username, ApplicationContext context, Env env) {
+    public Session(String username, ApplicationContext context) {
         this.sessionId = UUID.randomUUID().toString();
         this.username = username;
         this.env = Env.DEV; //Default env for session
@@ -55,7 +54,7 @@ public class Session {
 
     public void setEnv(Env env) {
         this.env = env;
-        this.routingDataSource.setEnv(env);
+        this.dataSource.setEnv(env);
     }
 
     public DataSource getDataSource() {
@@ -65,7 +64,7 @@ public class Session {
     @VaadinSessionScope
     @Primary
     @Autowired
-    public DataSource dataSource(ApplicationContext context) {
+    public DataSourceRouting dataSource(ApplicationContext context) {
         DataSourceRouting routingDataSource = new DataSourceRouting();
         routingDataSource.initDatasource(env,
                 context.getBean("dsLocal", DataSource.class),

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS T_TRIGGER(
     CYCLIC NUMBER
 );
 
---CREATE SEQUENCE "TRIGGER_SEQ" MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 50 START WITH 99 NOCACHE NOCYCLE;
+CREATE SEQUENCE "T_TRIGGER_SEQ" MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 50 START WITH 99 NOCACHE NOCYCLE;
 
 CREATE TABLE IF NOT EXISTS T_TEMPLATE(
     ID NUMBER PRIMARY KEY,
@@ -38,11 +38,11 @@ CREATE SEQUENCE "T_USER_SEQ" MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 50 START
 
 
 
-drop ALIAS if exists TO_DATE;
-CREATE ALIAS TO_DATE as '
-import java.text.*;
-@CODE
-java.util.Date toDate(String s, String dateFormat) throws Exception {
-  return new SimpleDateFormat(dateFormat).parse(s);
-}
-'
+--drop ALIAS if exists TO_DATE;
+--CREATE ALIAS TO_DATE as '
+--import java.text.*;
+--@CODE
+--java.util.Date toDate(String s, String dateFormat) throws Exception {
+--  return new SimpleDateFormat(dateFormat).parse(s);
+--}
+--'

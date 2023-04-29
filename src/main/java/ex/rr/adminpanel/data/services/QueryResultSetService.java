@@ -211,14 +211,14 @@ public class QueryResultSetService {
     }
 
     public Boolean query(DataSource dataSource, String data) {
-        return getResults.apply(dataSource,  data) > 0;
-    };
+        return getRowCount.apply(dataSource, data) > 0;
+    }
 
-    BiFunction<DataSource, String, Integer> getResults = (dataSource, s) -> {
+    ;
+
+    BiFunction<DataSource, String, Integer> getRowCount = (dataSource, s) -> {
         String query = String.format("SELECT COUNT(1) CNT FROM (%s)", s);
         try (Connection connection = dataSource.getConnection()) {
-
-            log.info(dataSource.getConnection().getMetaData().toString());
             try (ResultSet queryResults = connection.prepareStatement(query).executeQuery()) {
                 queryResults.next();
                 return queryResults.getInt("CNT");

@@ -4,7 +4,6 @@ import ex.rr.adminpanel.data.services.QueryResultSetService;
 import ex.rr.adminpanel.ui.Session;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Data
-@Component
 public class TaskRunner implements Runnable {
 
     private QueryResultSetService queryResultSetService;
@@ -38,7 +36,7 @@ public class TaskRunner implements Runnable {
     @Override
     public void run() {
         String output = switch (taskDefinition.getInputType()) {
-            case QUERY -> queryResultSetService.query(session.dataSource(), taskDefinition.getData()).toString();
+            case QUERY -> queryResultSetService.query(session.getDataSource(), taskDefinition.getData()).toString();
             case CURL -> null;
             case TEXT -> taskDefinition.getData();
         };
@@ -58,7 +56,7 @@ public class TaskRunner implements Runnable {
     }
 
     private void logTaskExecution(String data) {
-        log.info("Scheduled task executed. [{}]", data);
+        log.info("Scheduled task executed. Env:[{}], Data returned:[{}]", taskDefinition.getEnv(), data);
     }
 
     private void logEmptyResults() {
