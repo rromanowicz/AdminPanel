@@ -8,14 +8,14 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import ex.rr.adminpanel.ui.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.context.ApplicationContext;
 
 @Route("login")
 public
 class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     @Autowired
-    Environment env;
+    ApplicationContext context;
 
 
     private final LoginForm login = new LoginForm();
@@ -28,7 +28,7 @@ class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         login.setAction("login");
-        login.addLoginListener(event -> Utils.createSession(event.getUsername(), env));
+        login.addLoginListener(event -> Utils.createSession(event.getUsername(), context));
 
         add(new H1("Welcome"), login);
     }

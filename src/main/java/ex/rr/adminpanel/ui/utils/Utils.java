@@ -13,7 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinSession;
 import ex.rr.adminpanel.data.enums.Env;
 import ex.rr.adminpanel.ui.Session;
-import org.springframework.core.env.Environment;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Utility class.
@@ -65,7 +65,6 @@ public class Utils {
         }
     }
 
-
     /**
      * Clears user session from Vaadin context.
      */
@@ -74,16 +73,15 @@ public class Utils {
         session.setAttribute("userSession", null);
     }
 
-
     /**
      * Creates Session bean and stores in Vaadin context.
      *
-     * @param username    User login.
-     * @param environment Application properties environment.
+     * @param username User login.
+     * @param context  Application properties environment.
      * @see Session
      */
-    public static void createSession(String username, Environment environment) {
+    public static void createSession(String username, ApplicationContext context) {
         VaadinSession session = VaadinSession.getCurrent();
-        session.setAttribute("userSession", new Session(username, environment, Env.DEV));
+        session.setAttribute("userSession", new Session(username, context, Env.DEV));
     }
 }

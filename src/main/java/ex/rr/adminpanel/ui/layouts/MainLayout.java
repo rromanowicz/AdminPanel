@@ -20,7 +20,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -35,7 +34,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Arrays;
 
 
-@Route("")
 @PageTitle("")
 @AnonymousAllowed
 public class MainLayout extends AppLayout {
@@ -47,7 +45,7 @@ public class MainLayout extends AppLayout {
     private Session session;
 
     protected void onAttach(AttachEvent attachEvent) {
-        UI ui = getUI().get();
+        UI ui = getUI().orElseThrow();
         Button button;
 
         this.session = Utils.getUserSession();
@@ -59,7 +57,7 @@ public class MainLayout extends AppLayout {
                 Utils.clearSession();
                 SecurityContextHolder.clearContext();
                 ui.getSession().close();
-                UI.getCurrent().getPage().setLocation("/logout");
+                UI.getCurrent().getPage().setLocation("/");
             });
 
             createEnvSelector();
