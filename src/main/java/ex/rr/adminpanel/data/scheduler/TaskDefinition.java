@@ -28,6 +28,7 @@ import lombok.Data;
 @Builder
 public class TaskDefinition {
     private String id;
+    private String name;
     private Env env;
     private String cronExpression;
     private InputType inputType;
@@ -43,6 +44,7 @@ public class TaskDefinition {
     public static TaskDefinition fromTrigger(Trigger trigger) {
         return TaskDefinition.builder()
                 .id(trigger.getId())
+                .name(trigger.getName())
                 .env(trigger.getEnv())
                 .cronExpression(trigger.getCron())
                 .inputType(trigger.getInputType())

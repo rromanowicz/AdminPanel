@@ -34,6 +34,7 @@ public class Trigger {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    private String name;
     private Env env;
     @NotEmpty
     private String input;
@@ -101,5 +102,13 @@ public class Trigger {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
     }
 }

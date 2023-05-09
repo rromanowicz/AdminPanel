@@ -5,7 +5,7 @@ logging:
       rr: INFO
 
 server:
-  port: 8080
+  port: 8081
   shutdown: graceful
 
 spring:
@@ -81,4 +81,4 @@ vaadin:
 
 app:
   secret:
-    salt: ${SALT}
+    salt: ${SALT:salt}

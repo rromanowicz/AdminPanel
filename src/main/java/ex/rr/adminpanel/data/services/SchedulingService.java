@@ -4,7 +4,6 @@ import ex.rr.adminpanel.ui.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
@@ -72,7 +71,6 @@ public class SchedulingService {
      *
      * @return username
      */
-    @Nullable
     private static String getUser() {
         if (Utils.getUserSession() != null) {
             return StringUtils.capitalize(Utils.getUserSession().getUsername());

@@ -29,6 +29,7 @@ public class TriggerService {
     private final ApplicationContext context;
     private final SchedulingService schedulingService;
     private final QueryResultSetService queryResultSetService;
+    private final RestService restService;
 
     private final TriggerRepository triggerRepository;
 
@@ -61,7 +62,7 @@ public class TriggerService {
     private void scheduleTask(Trigger trigger) {
         Session session = new Session(this.getClass().getName(), context);
         session.setEnv(trigger.getEnv());
-        TaskRunner taskRunner = new TaskRunner(queryResultSetService, session);
+        TaskRunner taskRunner = new TaskRunner(queryResultSetService, restService, session);
         taskRunner.setTaskDefinition(
                 TaskDefinition.fromTrigger(trigger)
         );
@@ -76,14 +77,4 @@ public class TriggerService {
         }
     }
 
-
-    private DataSource getEnvDataSource(Env env) {
-        return switch (env) {
-            case LOCAL -> context.getBean("dsLocal", DataSource.class);
-            case DEV -> context.getBean("dsDev", DataSource.class);
-            case SIT -> context.getBean("dsSit", DataSource.class);
-            case SAT -> context.getBean("dsSat", DataSource.class);
-            case PROD -> context.getBean("dsProd", DataSource.class);
-        };
-    }
 }
